@@ -5,10 +5,9 @@ import { disableAdminMode } from "../actions";
 export default async function AdminContentPage({
   searchParams
 }: {
-  searchParams?: { section?: string } | Promise<{ section?: string }>;
+  searchParams?: Promise<{ section?: string }>;
 }) {
-  const params =
-    searchParams instanceof Promise ? await searchParams : (searchParams ?? {});
+  const params = (await searchParams) ?? {};
 
   return (
     <section className="py-12">
