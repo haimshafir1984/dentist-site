@@ -362,24 +362,79 @@ export const defaultSiteContent: SiteContent = {
 };
 
 function normalizeContent(data: Partial<SiteContent> | null | undefined): SiteContent {
+  const theme = {
+    ...defaultSiteContent.shared.theme,
+    ...data?.shared?.theme
+  };
+  const safeTheme = {
+    primaryColor: /^#[0-9a-fA-F]{6}$/.test(theme.primaryColor)
+      ? theme.primaryColor
+      : defaultSiteContent.shared.theme.primaryColor,
+    accentColor: /^#[0-9a-fA-F]{6}$/.test(theme.accentColor)
+      ? theme.accentColor
+      : defaultSiteContent.shared.theme.accentColor,
+    fontFamily: ["assistant", "heebo", "rubik"].includes(theme.fontFamily)
+      ? theme.fontFamily
+      : defaultSiteContent.shared.theme.fontFamily
+  } as SiteContent["shared"]["theme"];
+
   return {
     ...defaultSiteContent,
     ...data,
     shared: {
       ...defaultSiteContent.shared,
       ...data?.shared,
-      theme: {
-        ...defaultSiteContent.shared.theme,
-        ...data?.shared?.theme
-      }
+      theme: safeTheme
     },
-    home: { ...defaultSiteContent.home, ...data?.home },
-    about: { ...defaultSiteContent.about, ...data?.about },
-    treatments: { ...defaultSiteContent.treatments, ...data?.treatments },
-    pricing: { ...defaultSiteContent.pricing, ...data?.pricing },
+    home: {
+      ...defaultSiteContent.home,
+      ...data?.home,
+      valueCards: Array.isArray(data?.home?.valueCards)
+        ? data.home.valueCards
+        : defaultSiteContent.home.valueCards,
+      clinicalBullets: Array.isArray(data?.home?.clinicalBullets)
+        ? data.home.clinicalBullets
+        : defaultSiteContent.home.clinicalBullets,
+      treatmentsCards: Array.isArray(data?.home?.treatmentsCards)
+        ? data.home.treatmentsCards
+        : defaultSiteContent.home.treatmentsCards,
+      processSteps: Array.isArray(data?.home?.processSteps)
+        ? data.home.processSteps
+        : defaultSiteContent.home.processSteps
+    },
+    about: {
+      ...defaultSiteContent.about,
+      ...data?.about,
+      introBullets: Array.isArray(data?.about?.introBullets)
+        ? data.about.introBullets
+        : defaultSiteContent.about.introBullets,
+      approachItems: Array.isArray(data?.about?.approachItems)
+        ? data.about.approachItems
+        : defaultSiteContent.about.approachItems,
+      principles: Array.isArray(data?.about?.principles)
+        ? data.about.principles
+        : defaultSiteContent.about.principles
+    },
+    treatments: {
+      ...defaultSiteContent.treatments,
+      ...data?.treatments,
+      cards: Array.isArray(data?.treatments?.cards)
+        ? data.treatments.cards
+        : defaultSiteContent.treatments.cards
+    },
+    pricing: {
+      ...defaultSiteContent.pricing,
+      ...data?.pricing,
+      factors: Array.isArray(data?.pricing?.factors)
+        ? data.pricing.factors
+        : defaultSiteContent.pricing.factors
+    },
     contact: {
       ...defaultSiteContent.contact,
       ...data?.contact,
+      prepItems: Array.isArray(data?.contact?.prepItems)
+        ? data.contact.prepItems
+        : defaultSiteContent.contact.prepItems,
       formLabels: {
         ...defaultSiteContent.contact.formLabels,
         ...data?.contact?.formLabels
