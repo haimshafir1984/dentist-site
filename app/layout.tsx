@@ -33,6 +33,7 @@ export default async function RootLayout({
     <html lang="he" dir="rtl">
       <body
         className="min-h-screen"
+        data-theme={theme.presetId}
         style={
           ({
             ["--primary-color" as string]: theme.primaryColor,

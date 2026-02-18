@@ -1,5 +1,6 @@
 import { promises as fs } from "fs";
 import path from "path";
+import { isThemePresetId, THEME_PRESETS, type ThemePresetId } from "@/lib/theme-presets";
 
 export type Item = { title: string; text: string; badge?: string };
 export type FaqItem = { q: string; a: string };
@@ -20,6 +21,7 @@ export type SiteContent = {
     navCtaLabel: string;
     logoImageUrl?: string;
     theme: {
+      presetId: ThemePresetId;
       primaryColor: string;
       accentColor: string;
       fontFamily: "heebo" | "rubik" | "assistant";
@@ -141,9 +143,10 @@ export const defaultSiteContent: SiteContent = {
     navCtaLabel: "לתיאום ייעוץ",
     logoImageUrl: "",
     theme: {
-      primaryColor: "#0369a1",
-      accentColor: "#0ea5e9",
-      fontFamily: "assistant"
+      presetId: THEME_PRESETS.medical.id,
+      primaryColor: THEME_PRESETS.medical.primaryColor,
+      accentColor: THEME_PRESETS.medical.accentColor,
+      fontFamily: THEME_PRESETS.medical.fontFamily
     },
     address: "הנדיב 71, הרצליה",
     phone: "09-7790809",
@@ -367,6 +370,9 @@ function normalizeContent(data: Partial<SiteContent> | null | undefined): SiteCo
     ...data?.shared?.theme
   };
   const safeTheme = {
+    presetId: isThemePresetId(theme.presetId)
+      ? theme.presetId
+      : defaultSiteContent.shared.theme.presetId,
     primaryColor: /^#[0-9a-fA-F]{6}$/.test(theme.primaryColor)
       ? theme.primaryColor
       : defaultSiteContent.shared.theme.primaryColor,

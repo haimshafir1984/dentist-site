@@ -2,6 +2,11 @@
 
 import { useEffect, useMemo, useState } from "react";
 import type { SiteContent } from "@/lib/site-content";
+import {
+  THEME_PRESETS,
+  isThemePresetId,
+  type ThemePresetId
+} from "@/lib/theme-presets";
 
 const sectionOptions = [
   { value: "shared", label: "מיתוג ופרטי קשר" },
@@ -29,6 +34,7 @@ function isSectionValue(value: string): value is SectionValue {
 }
 
 const defaultTheme: SiteContent["shared"]["theme"] = {
+  presetId: "medical",
   primaryColor: "#0369a1",
   accentColor: "#0ea5e9",
   fontFamily: "assistant"
@@ -195,6 +201,9 @@ export default function AdminContentEditor({
           {(() => {
             const sharedDraft = draft as SiteContent["shared"];
             const theme = { ...defaultTheme, ...(sharedDraft.theme || {}) };
+            const activePresetId: ThemePresetId = isThemePresetId(theme.presetId)
+              ? theme.presetId
+              : "medical";
             return (
               <>
           <label className="text-sm">
@@ -347,6 +356,37 @@ export default function AdminContentEditor({
           </label>
           <div className="md:col-span-2 rounded-xl border border-slate-200 bg-slate-50 p-4">
             <div className="font-semibold text-slate-900">עיצוב האתר</div>
+            <div className="mt-3 rounded-xl border border-slate-200 bg-white p-3">
+              <label className="text-sm block">
+                <span className="font-medium">בחירת תבנית עיצוב</span>
+                <select
+                  className="mt-1 h-10 w-full rounded-xl border border-slate-200 px-2 bg-white"
+                  value={activePresetId}
+                  onChange={(e) => {
+                    const nextPresetId = e.target.value as ThemePresetId;
+                    if (!isThemePresetId(nextPresetId)) return;
+                    const preset = THEME_PRESETS[nextPresetId];
+                    updateDraft({
+                      ...sharedDraft,
+                      theme: {
+                        presetId: preset.id,
+                        primaryColor: preset.primaryColor,
+                        accentColor: preset.accentColor,
+                        fontFamily: preset.fontFamily
+                      }
+                    });
+                  }}
+                >
+                  {(Object.values(THEME_PRESETS) as Array<(typeof THEME_PRESETS)[ThemePresetId]>).map(
+                    (preset) => (
+                      <option key={preset.id} value={preset.id}>
+                        {preset.label}
+                      </option>
+                    )
+                  )}
+                </select>
+              </label>
+            </div>
             <div className="mt-3 grid gap-4 md:grid-cols-3">
               <label className="text-sm">
                 <span className="font-medium">צבע ראשי</span>
@@ -359,6 +399,7 @@ export default function AdminContentEditor({
                       ...sharedDraft,
                       theme: {
                         ...theme,
+                        presetId: activePresetId,
                         primaryColor: e.target.value
                       }
                     })
@@ -376,6 +417,7 @@ export default function AdminContentEditor({
                       ...sharedDraft,
                       theme: {
                         ...theme,
+                        presetId: activePresetId,
                         accentColor: e.target.value
                       }
                     })
@@ -392,6 +434,7 @@ export default function AdminContentEditor({
                       ...sharedDraft,
                       theme: {
                         ...theme,
+                        presetId: activePresetId,
                         fontFamily: e.target.value as SiteContent["shared"]["theme"]["fontFamily"]
                       }
                     })
