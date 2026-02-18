@@ -18,6 +18,11 @@ export type SiteContent = {
     doctorName: string;
     specialty: string;
     navCtaLabel: string;
+    theme: {
+      primaryColor: string;
+      accentColor: string;
+      fontFamily: "heebo" | "rubik" | "assistant";
+    };
     address: string;
     phone: string;
     mobile: string;
@@ -131,6 +136,11 @@ export const defaultSiteContent: SiteContent = {
     doctorName: "ד״ר בני פרדמן",
     specialty: "מומחה לשיקום הפה",
     navCtaLabel: "לתיאום ייעוץ",
+    theme: {
+      primaryColor: "#0369a1",
+      accentColor: "#0ea5e9",
+      fontFamily: "assistant"
+    },
     address: "הנדיב 71, הרצליה",
     phone: "09-7790809",
     mobile: "053-4534916",
@@ -349,12 +359,26 @@ function normalizeContent(data: Partial<SiteContent> | null | undefined): SiteCo
   return {
     ...defaultSiteContent,
     ...data,
-    shared: { ...defaultSiteContent.shared, ...data?.shared },
+    shared: {
+      ...defaultSiteContent.shared,
+      ...data?.shared,
+      theme: {
+        ...defaultSiteContent.shared.theme,
+        ...data?.shared?.theme
+      }
+    },
     home: { ...defaultSiteContent.home, ...data?.home },
     about: { ...defaultSiteContent.about, ...data?.about },
     treatments: { ...defaultSiteContent.treatments, ...data?.treatments },
     pricing: { ...defaultSiteContent.pricing, ...data?.pricing },
-    contact: { ...defaultSiteContent.contact, ...data?.contact },
+    contact: {
+      ...defaultSiteContent.contact,
+      ...data?.contact,
+      formLabels: {
+        ...defaultSiteContent.contact.formLabels,
+        ...data?.contact?.formLabels
+      }
+    },
     faq: {
       items: Array.isArray(data?.faq?.items) ? data.faq.items : defaultSiteContent.faq.items
     },

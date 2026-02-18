@@ -4,6 +4,8 @@
 
 :root {
   color-scheme: light;
+  --primary-color: #0369a1;
+  --accent-color: #0ea5e9;
 }
 
 body {
@@ -19,7 +21,8 @@ body {
 }
 
 ::selection {
-  @apply bg-sky-200 text-slate-900;
+  background-color: color-mix(in srgb, var(--accent-color) 35%, white);
+  color: #0f172a;
 }
 
 @layer components {
@@ -28,10 +31,22 @@ body {
   }
 
   .btn-primary {
-    @apply rounded-xl bg-sky-700 text-white px-5 py-2.5 text-sm font-semibold transition hover:bg-sky-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300;
+    @apply rounded-xl text-white px-5 py-2.5 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2;
+    background-color: var(--primary-color);
+    focus-visible:ring-color: color-mix(in srgb, var(--accent-color) 45%, white);
+  }
+
+  .btn-primary:hover {
+    background-color: color-mix(in srgb, var(--primary-color) 85%, black);
   }
 
   .btn-secondary {
-    @apply rounded-xl border border-slate-300 bg-white px-5 py-2.5 text-sm font-semibold text-slate-800 transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-300;
+    @apply rounded-xl border bg-white px-5 py-2.5 text-sm font-semibold text-slate-800 transition focus-visible:outline-none focus-visible:ring-2;
+    border-color: color-mix(in srgb, var(--accent-color) 28%, #cbd5e1);
+    focus-visible:ring-color: color-mix(in srgb, var(--accent-color) 35%, white);
+  }
+
+  .btn-secondary:hover {
+    background-color: #f8fafc;
   }
 }
