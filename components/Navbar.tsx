@@ -18,8 +18,16 @@ export default async function Navbar() {
     <header className="sticky top-0 z-50 border-b border-slate-200/70 bg-white/80 backdrop-blur-xl">
       <div className="container h-16 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2">
-          <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-sky-700 text-white font-bold shadow-sm">
-            BF
+          <span className="inline-flex h-9 w-9 items-center justify-center overflow-hidden rounded-xl bg-sky-700 text-white font-bold shadow-sm">
+            {shared.logoImageUrl ? (
+              <img
+                src={shared.logoImageUrl}
+                alt={shared.doctorName}
+                className="h-full w-full object-cover"
+              />
+            ) : (
+              "BF"
+            )}
           </span>
           <div className="leading-tight">
             <div className="font-semibold">{shared.doctorName}</div>

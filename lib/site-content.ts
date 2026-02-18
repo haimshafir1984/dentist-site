@@ -18,6 +18,7 @@ export type SiteContent = {
     doctorName: string;
     specialty: string;
     navCtaLabel: string;
+    logoImageUrl?: string;
     theme: {
       primaryColor: string;
       accentColor: string;
@@ -36,6 +37,7 @@ export type SiteContent = {
     heroSubtitle: string;
     primaryCta: string;
     secondaryCta: string;
+    heroImageUrl?: string;
     valueCards: Item[];
     clinicalTitle: string;
     clinicalBullets: string[];
@@ -58,6 +60,7 @@ export type SiteContent = {
   about: {
     title: string;
     subtitle: string;
+    profileImageUrl?: string;
     introTitle: string;
     introText: string;
     introBullets: string[];
@@ -136,6 +139,7 @@ export const defaultSiteContent: SiteContent = {
     doctorName: "ד״ר בני פרדמן",
     specialty: "מומחה לשיקום הפה",
     navCtaLabel: "לתיאום ייעוץ",
+    logoImageUrl: "",
     theme: {
       primaryColor: "#0369a1",
       accentColor: "#0ea5e9",
@@ -156,6 +160,7 @@ export const defaultSiteContent: SiteContent = {
     heroSubtitle: "תכנון דיגיטלי, דיוק, ויחס אישי רגוע — משלב האבחון ועד החיוך.",
     primaryCta: "לתיאום ייעוץ",
     secondaryCta: "תחומי טיפול",
+    heroImageUrl: "",
     valueCards: [
       { title: "מומחה בשיקום הפה", text: "דיוק שיקומי במקרים פשוטים ומורכבים" },
       { title: "תכנון דיגיטלי מתקדם", text: "קבלת החלטות על בסיס תכנון והדמיה" },
@@ -227,6 +232,7 @@ export const defaultSiteContent: SiteContent = {
     title: "אודות ד״ר בני פרדמן",
     subtitle:
       "מומחה לשיקום הפה ואסתטיקה דנטלית, עם דגש על תכנון מדויק, שקיפות קלינית ויחס אישי רגוע.",
+    profileImageUrl: "",
     introTitle: "ד״ר בני פרדמן",
     introText:
       "ד״ר בני פרדמן מטפל במקרים שיקומיים ותפקודיים, כולל מקרים מורכבים הדורשים ראייה רחבה ותכנון רב-שלבי. תהליך העבודה משלב אבחון מעמיק, תכנון דיגיטלי, ושיח מקצועי ברור עם המטופל לכל אורך הדרך.",

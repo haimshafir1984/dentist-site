@@ -52,6 +52,13 @@ export default async function HomePage() {
           </div>
 
           <div className="rounded-3xl border border-sky-100 bg-gradient-to-b from-sky-50/80 to-white p-8 shadow-[0_15px_40px_-24px_rgba(2,132,199,0.5)]">
+            {home.heroImageUrl ? (
+              <img
+                src={home.heroImageUrl}
+                alt={home.heroTitle}
+                className="mb-4 h-44 w-full rounded-2xl border border-slate-200 object-cover"
+              />
+            ) : null}
             <div className="text-sm font-semibold text-sky-800">{home.clinicalTitle}</div>
             <ul className="mt-4 space-y-3 text-slate-700">
               {home.clinicalBullets.map((item) => (

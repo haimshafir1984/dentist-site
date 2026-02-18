@@ -13,6 +13,13 @@ export default async function AboutPage() {
       <AdminEditHint section="about" />
       <div className="grid gap-6 md:grid-cols-2">
         <div className="surface-card p-6">
+          {about.profileImageUrl ? (
+            <img
+              src={about.profileImageUrl}
+              alt={about.introTitle}
+              className="mb-4 h-52 w-full rounded-2xl border border-slate-200 object-cover"
+            />
+          ) : null}
           <h3 className="font-semibold text-lg">{about.introTitle}</h3>
           <p className="mt-3 text-slate-600 leading-relaxed">
             {about.introText}

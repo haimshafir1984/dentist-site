@@ -22,6 +22,8 @@ type ApiResult = {
   content: SiteContent;
 };
 
+type UploadResponse = { ok: boolean; url?: string; error?: string };
+
 function isSectionValue(value: string): value is SectionValue {
   return sectionOptions.some((opt) => opt.value === value);
 }
@@ -39,6 +41,7 @@ export default function AdminContentEditor({
   const [status, setStatus] = useState<string>("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [uploadingField, setUploadingField] = useState<string>("");
 
   useEffect(() => {
     async function load() {
@@ -79,67 +82,6 @@ export default function AdminContentEditor({
     return value.join("\n");
   }
 
-  function itemsToLines(items: { title: string; text: string; badge?: string }[]) {
-    return items
-      .map((x) => [x.title, x.text, x.badge || ""].join(" | "))
-      .join("\n");
-  }
-
-  function linesToItems(lines: string) {
-    return linesToList(lines).map((line) => {
-      const [title = "", text = "", badge = ""] = line.split("|").map((x) => x.trim());
-      return { title, text, badge: badge || undefined };
-    });
-  }
-
-  function faqToLines(items: { q: string; a: string }[]) {
-    return items.map((x) => `${x.q} | ${x.a}`).join("\n");
-  }
-
-  function linesToFaq(lines: string) {
-    return linesToList(lines).map((line) => {
-      const [q = "", a = ""] = line.split("|").map((x) => x.trim());
-      return { q, a };
-    });
-  }
-
-  function testimonialsToLines(items: { name: string; text: string }[]) {
-    return items.map((x) => `${x.name} | ${x.text}`).join("\n");
-  }
-
-  function linesToTestimonials(lines: string) {
-    return linesToList(lines).map((line) => {
-      const [name = "", text = ""] = line.split("|").map((x) => x.trim());
-      return { name, text };
-    });
-  }
-
-  function publicationsToLines(items: SiteContent["publications"]["items"]) {
-    return items
-      .map((x) =>
-        [x.title, String(x.year), x.journal, x.doi || "", x.doiUrl || "", x.pubmedUrl || ""].join(
-          " | "
-        )
-      )
-      .join("\n");
-  }
-
-  function linesToPublications(lines: string) {
-    return linesToList(lines).map((line) => {
-      const [title = "", yearRaw = "", journal = "", doi = "", doiUrl = "", pubmedUrl = ""] =
-        line.split("|").map((x) => x.trim());
-      const year = Number(yearRaw) || new Date().getFullYear();
-      return {
-        title,
-        year,
-        journal,
-        doi: doi || undefined,
-        doiUrl: doiUrl || undefined,
-        pubmedUrl: pubmedUrl || undefined
-      };
-    });
-  }
-
   function updateDraft(next: unknown) {
     setDraft(next);
   }
@@ -172,6 +114,30 @@ export default function AdminContentEditor({
     } finally {
       setSaving(false);
     }
+  }
+
+  async function uploadImage(file: File, onSuccess: (url: string) => void, fieldKey: string) {
+    setUploadingField(fieldKey);
+    setStatus("");
+    try {
+      const fd = new FormData();
+      fd.append("file", file);
+      const res = await fetch("/api/admin/upload", { method: "POST", body: fd });
+      const data = (await res.json()) as UploadResponse;
+      if (!res.ok || !data.url) {
+        throw new Error(data.error || "העלאת תמונה נכשלה");
+      }
+      onSuccess(data.url);
+      setStatus("התמונה הועלתה בהצלחה. אל תשכח/י ללחוץ שמירה.");
+    } catch (error: unknown) {
+      setStatus(error instanceof Error ? error.message : "שגיאה בהעלאה");
+    } finally {
+      setUploadingField("");
+    }
+  }
+
+  function updateItemArray<T>(arr: T[], index: number, item: T) {
+    return arr.map((x, i) => (i === index ? item : x));
   }
 
   if (loading) {
@@ -289,6 +255,50 @@ export default function AdminContentEditor({
               }
             />
           </label>
+          <div className="md:col-span-2 rounded-xl border border-slate-200 p-4 bg-slate-50">
+            <div className="font-semibold text-slate-900">לוגו / תמונת מותג</div>
+            <div className="mt-2 grid gap-3 md:grid-cols-[1fr_auto]">
+              <input
+                className="w-full rounded-xl border border-slate-200 p-2 bg-white"
+                placeholder="/uploads/logo.png"
+                value={(draft as SiteContent["shared"]).logoImageUrl || ""}
+                onChange={(e) =>
+                  updateDraft({
+                    ...(draft as SiteContent["shared"]),
+                    logoImageUrl: e.target.value
+                  })
+                }
+              />
+              <label className="btn-secondary cursor-pointer text-center">
+                העלאת לוגו
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+                    void uploadImage(
+                      file,
+                      (url) =>
+                        updateDraft({
+                          ...(draft as SiteContent["shared"]),
+                          logoImageUrl: url
+                        }),
+                      "shared.logoImageUrl"
+                    );
+                  }}
+                />
+              </label>
+            </div>
+            {(draft as SiteContent["shared"]).logoImageUrl ? (
+              <img
+                src={(draft as SiteContent["shared"]).logoImageUrl}
+                alt="logo preview"
+                className="mt-3 h-16 w-16 rounded-xl border border-slate-200 object-cover"
+              />
+            ) : null}
+          </div>
           <label className="text-sm md:col-span-2">
             <span className="font-medium">טקסט תחתון</span>
             <textarea
@@ -416,18 +426,117 @@ export default function AdminContentEditor({
               />
             </label>
           ))}
+          <div className="rounded-xl border border-slate-200 p-4 bg-slate-50">
+            <div className="font-semibold text-slate-900">תמונת Hero</div>
+            <div className="mt-2 grid gap-3 md:grid-cols-[1fr_auto]">
+              <input
+                className="w-full rounded-xl border border-slate-200 p-2 bg-white"
+                value={(draft as SiteContent["home"]).heroImageUrl || ""}
+                onChange={(e) =>
+                  updateDraft({
+                    ...(draft as SiteContent["home"]),
+                    heroImageUrl: e.target.value
+                  })
+                }
+                placeholder="/uploads/hero.jpg"
+              />
+              <label className="btn-secondary cursor-pointer text-center">
+                העלאת תמונה
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+                    void uploadImage(
+                      file,
+                      (url) =>
+                        updateDraft({
+                          ...(draft as SiteContent["home"]),
+                          heroImageUrl: url
+                        }),
+                      "home.heroImageUrl"
+                    );
+                  }}
+                />
+              </label>
+            </div>
+            {(draft as SiteContent["home"]).heroImageUrl ? (
+              <img
+                src={(draft as SiteContent["home"]).heroImageUrl}
+                alt="hero preview"
+                className="mt-3 h-28 w-full rounded-xl border border-slate-200 object-cover"
+              />
+            ) : null}
+          </div>
           <label className="text-sm">
-            <span className="font-medium">כרטיסי ערכים (שורה: כותרת | טקסט)</span>
-            <textarea
-              className="mt-1 w-full min-h-28 rounded-xl border border-slate-200 p-2"
-              value={itemsToLines((draft as SiteContent["home"]).valueCards)}
-              onChange={(e) =>
-                updateDraft({
-                  ...(draft as SiteContent["home"]),
-                  valueCards: linesToItems(e.target.value)
-                })
-              }
-            />
+            <span className="font-medium">כרטיסי ערכים</span>
+            <div className="mt-2 space-y-2">
+              {(draft as SiteContent["home"]).valueCards.map((item, idx) => (
+                <div key={`${item.title}-${idx}`} className="grid gap-2 md:grid-cols-2">
+                  <input
+                    className="rounded-xl border border-slate-200 p-2"
+                    placeholder="כותרת"
+                    value={item.title}
+                    onChange={(e) =>
+                      updateDraft({
+                        ...(draft as SiteContent["home"]),
+                        valueCards: updateItemArray((draft as SiteContent["home"]).valueCards, idx, {
+                          ...item,
+                          title: e.target.value
+                        })
+                      })
+                    }
+                  />
+                  <div className="flex gap-2">
+                    <input
+                      className="w-full rounded-xl border border-slate-200 p-2"
+                      placeholder="טקסט"
+                      value={item.text}
+                      onChange={(e) =>
+                        updateDraft({
+                          ...(draft as SiteContent["home"]),
+                          valueCards: updateItemArray((draft as SiteContent["home"]).valueCards, idx, {
+                            ...item,
+                            text: e.target.value
+                          })
+                        })
+                      }
+                    />
+                    <button
+                      type="button"
+                      className="btn-secondary px-3"
+                      onClick={() =>
+                        updateDraft({
+                          ...(draft as SiteContent["home"]),
+                          valueCards: (draft as SiteContent["home"]).valueCards.filter(
+                            (_, i) => i !== idx
+                          )
+                        })
+                      }
+                    >
+                      מחק
+                    </button>
+                  </div>
+                </div>
+              ))}
+              <button
+                type="button"
+                className="btn-secondary"
+                onClick={() =>
+                  updateDraft({
+                    ...(draft as SiteContent["home"]),
+                    valueCards: [
+                      ...(draft as SiteContent["home"]).valueCards,
+                      { title: "כותרת חדשה", text: "טקסט חדש" }
+                    ]
+                  })
+                }
+              >
+                + הוסף כרטיס
+              </button>
+            </div>
           </label>
           <label className="text-sm">
             <span className="font-medium">נקודות קליניות (שורה לכל נקודה)</span>
@@ -443,36 +552,207 @@ export default function AdminContentEditor({
             />
           </label>
           <label className="text-sm">
-            <span className="font-medium">כרטיסי תחומי טיפול (כותרת | טקסט | תג)</span>
-            <textarea
-              className="mt-1 w-full min-h-32 rounded-xl border border-slate-200 p-2"
-              value={itemsToLines((draft as SiteContent["home"]).treatmentsCards)}
-              onChange={(e) =>
-                updateDraft({
-                  ...(draft as SiteContent["home"]),
-                  treatmentsCards: linesToItems(e.target.value)
-                })
-              }
-            />
+            <span className="font-medium">כרטיסי תחומי טיפול</span>
+            <div className="mt-2 space-y-2">
+              {(draft as SiteContent["home"]).treatmentsCards.map((item, idx) => (
+                <div key={`${item.title}-${idx}`} className="grid gap-2 md:grid-cols-3">
+                  <input
+                    className="rounded-xl border border-slate-200 p-2"
+                    placeholder="כותרת"
+                    value={item.title}
+                    onChange={(e) =>
+                      updateDraft({
+                        ...(draft as SiteContent["home"]),
+                        treatmentsCards: updateItemArray(
+                          (draft as SiteContent["home"]).treatmentsCards,
+                          idx,
+                          { ...item, title: e.target.value }
+                        )
+                      })
+                    }
+                  />
+                  <input
+                    className="rounded-xl border border-slate-200 p-2"
+                    placeholder="טקסט"
+                    value={item.text}
+                    onChange={(e) =>
+                      updateDraft({
+                        ...(draft as SiteContent["home"]),
+                        treatmentsCards: updateItemArray(
+                          (draft as SiteContent["home"]).treatmentsCards,
+                          idx,
+                          { ...item, text: e.target.value }
+                        )
+                      })
+                    }
+                  />
+                  <div className="flex gap-2">
+                    <input
+                      className="w-full rounded-xl border border-slate-200 p-2"
+                      placeholder="תג"
+                      value={item.badge || ""}
+                      onChange={(e) =>
+                        updateDraft({
+                          ...(draft as SiteContent["home"]),
+                          treatmentsCards: updateItemArray(
+                            (draft as SiteContent["home"]).treatmentsCards,
+                            idx,
+                            { ...item, badge: e.target.value || undefined }
+                          )
+                        })
+                      }
+                    />
+                    <button
+                      type="button"
+                      className="btn-secondary px-3"
+                      onClick={() =>
+                        updateDraft({
+                          ...(draft as SiteContent["home"]),
+                          treatmentsCards: (draft as SiteContent["home"]).treatmentsCards.filter(
+                            (_, i) => i !== idx
+                          )
+                        })
+                      }
+                    >
+                      מחק
+                    </button>
+                  </div>
+                </div>
+              ))}
+              <button
+                type="button"
+                className="btn-secondary"
+                onClick={() =>
+                  updateDraft({
+                    ...(draft as SiteContent["home"]),
+                    treatmentsCards: [
+                      ...(draft as SiteContent["home"]).treatmentsCards,
+                      { title: "כותרת חדשה", text: "טקסט חדש", badge: "תג" }
+                    ]
+                  })
+                }
+              >
+                + הוסף כרטיס טיפול
+              </button>
+            </div>
           </label>
           <label className="text-sm">
-            <span className="font-medium">שלבי תהליך (כותרת | טקסט)</span>
-            <textarea
-              className="mt-1 w-full min-h-28 rounded-xl border border-slate-200 p-2"
-              value={itemsToLines((draft as SiteContent["home"]).processSteps)}
-              onChange={(e) =>
-                updateDraft({
-                  ...(draft as SiteContent["home"]),
-                  processSteps: linesToItems(e.target.value)
-                })
-              }
-            />
+            <span className="font-medium">שלבי תהליך</span>
+            <div className="mt-2 space-y-2">
+              {(draft as SiteContent["home"]).processSteps.map((item, idx) => (
+                <div key={`${item.title}-${idx}`} className="grid gap-2 md:grid-cols-2">
+                  <input
+                    className="rounded-xl border border-slate-200 p-2"
+                    placeholder="כותרת שלב"
+                    value={item.title}
+                    onChange={(e) =>
+                      updateDraft({
+                        ...(draft as SiteContent["home"]),
+                        processSteps: updateItemArray((draft as SiteContent["home"]).processSteps, idx, {
+                          ...item,
+                          title: e.target.value
+                        })
+                      })
+                    }
+                  />
+                  <div className="flex gap-2">
+                    <input
+                      className="w-full rounded-xl border border-slate-200 p-2"
+                      placeholder="תיאור"
+                      value={item.text}
+                      onChange={(e) =>
+                        updateDraft({
+                          ...(draft as SiteContent["home"]),
+                          processSteps: updateItemArray((draft as SiteContent["home"]).processSteps, idx, {
+                            ...item,
+                            text: e.target.value
+                          })
+                        })
+                      }
+                    />
+                    <button
+                      type="button"
+                      className="btn-secondary px-3"
+                      onClick={() =>
+                        updateDraft({
+                          ...(draft as SiteContent["home"]),
+                          processSteps: (draft as SiteContent["home"]).processSteps.filter(
+                            (_, i) => i !== idx
+                          )
+                        })
+                      }
+                    >
+                      מחק
+                    </button>
+                  </div>
+                </div>
+              ))}
+              <button
+                type="button"
+                className="btn-secondary"
+                onClick={() =>
+                  updateDraft({
+                    ...(draft as SiteContent["home"]),
+                    processSteps: [
+                      ...(draft as SiteContent["home"]).processSteps,
+                      { title: "שלב חדש", text: "תיאור שלב" }
+                    ]
+                  })
+                }
+              >
+                + הוסף שלב
+              </button>
+            </div>
           </label>
         </div>
       ) : null}
 
       {selected === "about" && draft ? (
         <div className="mt-3 grid gap-4">
+          <div className="rounded-xl border border-slate-200 p-4 bg-slate-50">
+            <div className="font-semibold text-slate-900">תמונת פרופיל / אודות</div>
+            <div className="mt-2 grid gap-3 md:grid-cols-[1fr_auto]">
+              <input
+                className="w-full rounded-xl border border-slate-200 p-2 bg-white"
+                value={(draft as SiteContent["about"]).profileImageUrl || ""}
+                onChange={(e) =>
+                  updateDraft({
+                    ...(draft as SiteContent["about"]),
+                    profileImageUrl: e.target.value
+                  })
+                }
+                placeholder="/uploads/about.jpg"
+              />
+              <label className="btn-secondary cursor-pointer text-center">
+                העלאת תמונה
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+                    void uploadImage(
+                      file,
+                      (url) =>
+                        updateDraft({
+                          ...(draft as SiteContent["about"]),
+                          profileImageUrl: url
+                        }),
+                      "about.profileImageUrl"
+                    );
+                  }}
+                />
+              </label>
+            </div>
+            {(draft as SiteContent["about"]).profileImageUrl ? (
+              <img
+                src={(draft as SiteContent["about"]).profileImageUrl}
+                alt="about preview"
+                className="mt-3 h-28 w-full rounded-xl border border-slate-200 object-cover"
+              />
+            ) : null}
+          </div>
           {(
             [
               ["title", "כותרת עמוד"],
@@ -524,32 +804,138 @@ export default function AdminContentEditor({
               }
             />
           </label>
-          <label className="text-sm">
-            <span className="font-medium">פריטי גישה טיפולית (כותרת | טקסט)</span>
-            <textarea
-              className="mt-1 w-full min-h-24 rounded-xl border border-slate-200 p-2"
-              value={itemsToLines((draft as SiteContent["about"]).approachItems)}
-              onChange={(e) =>
-                updateDraft({
-                  ...(draft as SiteContent["about"]),
-                  approachItems: linesToItems(e.target.value)
-                })
-              }
-            />
-          </label>
-          <label className="text-sm">
-            <span className="font-medium">עקרונות עבודה (כותרת | טקסט)</span>
-            <textarea
-              className="mt-1 w-full min-h-24 rounded-xl border border-slate-200 p-2"
-              value={itemsToLines((draft as SiteContent["about"]).principles)}
-              onChange={(e) =>
-                updateDraft({
-                  ...(draft as SiteContent["about"]),
-                  principles: linesToItems(e.target.value)
-                })
-              }
-            />
-          </label>
+          <div className="text-sm">
+            <span className="font-medium">פריטי גישה טיפולית</span>
+            <div className="mt-2 space-y-2">
+              {(draft as SiteContent["about"]).approachItems.map((item, idx) => (
+                <div key={`${item.title}-${idx}`} className="grid gap-2 md:grid-cols-[1fr_1fr_auto]">
+                  <input
+                    className="rounded-xl border border-slate-200 p-2"
+                    placeholder="כותרת"
+                    value={item.title}
+                    onChange={(e) =>
+                      updateDraft({
+                        ...(draft as SiteContent["about"]),
+                        approachItems: updateItemArray((draft as SiteContent["about"]).approachItems, idx, {
+                          ...item,
+                          title: e.target.value
+                        })
+                      })
+                    }
+                  />
+                  <input
+                    className="rounded-xl border border-slate-200 p-2"
+                    placeholder="טקסט"
+                    value={item.text}
+                    onChange={(e) =>
+                      updateDraft({
+                        ...(draft as SiteContent["about"]),
+                        approachItems: updateItemArray((draft as SiteContent["about"]).approachItems, idx, {
+                          ...item,
+                          text: e.target.value
+                        })
+                      })
+                    }
+                  />
+                  <button
+                    type="button"
+                    className="btn-secondary px-3"
+                    onClick={() =>
+                      updateDraft({
+                        ...(draft as SiteContent["about"]),
+                        approachItems: (draft as SiteContent["about"]).approachItems.filter(
+                          (_, i) => i !== idx
+                        )
+                      })
+                    }
+                  >
+                    מחק
+                  </button>
+                </div>
+              ))}
+              <button
+                type="button"
+                className="btn-secondary"
+                onClick={() =>
+                  updateDraft({
+                    ...(draft as SiteContent["about"]),
+                    approachItems: [
+                      ...(draft as SiteContent["about"]).approachItems,
+                      { title: "כותרת חדשה", text: "טקסט חדש" }
+                    ]
+                  })
+                }
+              >
+                + הוסף פריט גישה
+              </button>
+            </div>
+          </div>
+          <div className="text-sm">
+            <span className="font-medium">עקרונות עבודה</span>
+            <div className="mt-2 space-y-2">
+              {(draft as SiteContent["about"]).principles.map((item, idx) => (
+                <div key={`${item.title}-${idx}`} className="grid gap-2 md:grid-cols-[1fr_1fr_auto]">
+                  <input
+                    className="rounded-xl border border-slate-200 p-2"
+                    placeholder="כותרת"
+                    value={item.title}
+                    onChange={(e) =>
+                      updateDraft({
+                        ...(draft as SiteContent["about"]),
+                        principles: updateItemArray((draft as SiteContent["about"]).principles, idx, {
+                          ...item,
+                          title: e.target.value
+                        })
+                      })
+                    }
+                  />
+                  <input
+                    className="rounded-xl border border-slate-200 p-2"
+                    placeholder="טקסט"
+                    value={item.text}
+                    onChange={(e) =>
+                      updateDraft({
+                        ...(draft as SiteContent["about"]),
+                        principles: updateItemArray((draft as SiteContent["about"]).principles, idx, {
+                          ...item,
+                          text: e.target.value
+                        })
+                      })
+                    }
+                  />
+                  <button
+                    type="button"
+                    className="btn-secondary px-3"
+                    onClick={() =>
+                      updateDraft({
+                        ...(draft as SiteContent["about"]),
+                        principles: (draft as SiteContent["about"]).principles.filter(
+                          (_, i) => i !== idx
+                        )
+                      })
+                    }
+                  >
+                    מחק
+                  </button>
+                </div>
+              ))}
+              <button
+                type="button"
+                className="btn-secondary"
+                onClick={() =>
+                  updateDraft({
+                    ...(draft as SiteContent["about"]),
+                    principles: [
+                      ...(draft as SiteContent["about"]).principles,
+                      { title: "עיקרון חדש", text: "תיאור עיקרון" }
+                    ]
+                  })
+                }
+              >
+                + הוסף עיקרון
+              </button>
+            </div>
+          </div>
         </div>
       ) : null}
 
@@ -582,17 +968,81 @@ export default function AdminContentEditor({
             />
           </label>
           <label className="text-sm">
-            <span className="font-medium">כרטיסי טיפולים (כותרת | טקסט | תג)</span>
-            <textarea
-              className="mt-1 w-full min-h-32 rounded-xl border border-slate-200 p-2"
-              value={itemsToLines((draft as SiteContent["treatments"]).cards)}
-              onChange={(e) =>
-                updateDraft({
-                  ...(draft as SiteContent["treatments"]),
-                  cards: linesToItems(e.target.value)
-                })
-              }
-            />
+            <span className="font-medium">כרטיסי טיפולים</span>
+            <div className="mt-2 space-y-2">
+              {(draft as SiteContent["treatments"]).cards.map((item, idx) => (
+                <div key={`${item.title}-${idx}`} className="grid gap-2 md:grid-cols-3">
+                  <input
+                    className="rounded-xl border border-slate-200 p-2"
+                    value={item.title}
+                    onChange={(e) =>
+                      updateDraft({
+                        ...(draft as SiteContent["treatments"]),
+                        cards: updateItemArray((draft as SiteContent["treatments"]).cards, idx, {
+                          ...item,
+                          title: e.target.value
+                        })
+                      })
+                    }
+                  />
+                  <input
+                    className="rounded-xl border border-slate-200 p-2"
+                    value={item.text}
+                    onChange={(e) =>
+                      updateDraft({
+                        ...(draft as SiteContent["treatments"]),
+                        cards: updateItemArray((draft as SiteContent["treatments"]).cards, idx, {
+                          ...item,
+                          text: e.target.value
+                        })
+                      })
+                    }
+                  />
+                  <div className="flex gap-2">
+                    <input
+                      className="w-full rounded-xl border border-slate-200 p-2"
+                      value={item.badge || ""}
+                      onChange={(e) =>
+                        updateDraft({
+                          ...(draft as SiteContent["treatments"]),
+                          cards: updateItemArray((draft as SiteContent["treatments"]).cards, idx, {
+                            ...item,
+                            badge: e.target.value || undefined
+                          })
+                        })
+                      }
+                    />
+                    <button
+                      type="button"
+                      className="btn-secondary px-3"
+                      onClick={() =>
+                        updateDraft({
+                          ...(draft as SiteContent["treatments"]),
+                          cards: (draft as SiteContent["treatments"]).cards.filter((_, i) => i !== idx)
+                        })
+                      }
+                    >
+                      מחק
+                    </button>
+                  </div>
+                </div>
+              ))}
+              <button
+                type="button"
+                className="btn-secondary"
+                onClick={() =>
+                  updateDraft({
+                    ...(draft as SiteContent["treatments"]),
+                    cards: [
+                      ...(draft as SiteContent["treatments"]).cards,
+                      { title: "טיפול חדש", text: "תיאור טיפול", badge: "תג" }
+                    ]
+                  })
+                }
+              >
+                + הוסף טיפול
+              </button>
+            </div>
           </label>
           <label className="text-sm">
             <span className="font-medium">כותרת "למי זה מתאים"</span>
@@ -665,17 +1115,66 @@ export default function AdminContentEditor({
             />
           </label>
           <label className="text-sm">
-            <span className="font-medium">גורמים לעלות (כותרת | טקסט)</span>
-            <textarea
-              className="mt-1 w-full min-h-28 rounded-xl border border-slate-200 p-2"
-              value={itemsToLines((draft as SiteContent["pricing"]).factors)}
-              onChange={(e) =>
-                updateDraft({
-                  ...(draft as SiteContent["pricing"]),
-                  factors: linesToItems(e.target.value)
-                })
-              }
-            />
+            <span className="font-medium">גורמים לעלות</span>
+            <div className="mt-2 space-y-2">
+              {(draft as SiteContent["pricing"]).factors.map((item, idx) => (
+                <div key={`${item.title}-${idx}`} className="grid gap-2 md:grid-cols-[1fr_1fr_auto]">
+                  <input
+                    className="rounded-xl border border-slate-200 p-2"
+                    value={item.title}
+                    onChange={(e) =>
+                      updateDraft({
+                        ...(draft as SiteContent["pricing"]),
+                        factors: updateItemArray((draft as SiteContent["pricing"]).factors, idx, {
+                          ...item,
+                          title: e.target.value
+                        })
+                      })
+                    }
+                  />
+                  <input
+                    className="rounded-xl border border-slate-200 p-2"
+                    value={item.text}
+                    onChange={(e) =>
+                      updateDraft({
+                        ...(draft as SiteContent["pricing"]),
+                        factors: updateItemArray((draft as SiteContent["pricing"]).factors, idx, {
+                          ...item,
+                          text: e.target.value
+                        })
+                      })
+                    }
+                  />
+                  <button
+                    type="button"
+                    className="btn-secondary px-3"
+                    onClick={() =>
+                      updateDraft({
+                        ...(draft as SiteContent["pricing"]),
+                        factors: (draft as SiteContent["pricing"]).factors.filter((_, i) => i !== idx)
+                      })
+                    }
+                  >
+                    מחק
+                  </button>
+                </div>
+              ))}
+              <button
+                type="button"
+                className="btn-secondary"
+                onClick={() =>
+                  updateDraft({
+                    ...(draft as SiteContent["pricing"]),
+                    factors: [
+                      ...(draft as SiteContent["pricing"]).factors,
+                      { title: "גורם חדש", text: "תיאור גורם" }
+                    ]
+                  })
+                }
+              >
+                + הוסף גורם
+              </button>
+            </div>
           </label>
           <label className="text-sm">
             <span className="font-medium">סיכום</span>
@@ -800,19 +1299,64 @@ export default function AdminContentEditor({
       ) : null}
 
       {selected === "faq" && draft ? (
-        <label className="mt-3 block text-sm">
-          <span className="font-medium">שאלות נפוצות (שורה: שאלה | תשובה)</span>
-          <textarea
-            className="mt-1 w-full min-h-44 rounded-xl border border-slate-200 p-2"
-            value={faqToLines((draft as SiteContent["faq"]).items)}
-            onChange={(e) =>
+        <div className="mt-3 space-y-2">
+          {(draft as SiteContent["faq"]).items.map((item, idx) => (
+            <div key={`${item.q}-${idx}`} className="grid gap-2 md:grid-cols-[1fr_1fr_auto]">
+              <input
+                className="rounded-xl border border-slate-200 p-2"
+                placeholder="שאלה"
+                value={item.q}
+                onChange={(e) =>
+                  updateDraft({
+                    ...(draft as SiteContent["faq"]),
+                    items: updateItemArray((draft as SiteContent["faq"]).items, idx, {
+                      ...item,
+                      q: e.target.value
+                    })
+                  })
+                }
+              />
+              <input
+                className="rounded-xl border border-slate-200 p-2"
+                placeholder="תשובה"
+                value={item.a}
+                onChange={(e) =>
+                  updateDraft({
+                    ...(draft as SiteContent["faq"]),
+                    items: updateItemArray((draft as SiteContent["faq"]).items, idx, {
+                      ...item,
+                      a: e.target.value
+                    })
+                  })
+                }
+              />
+              <button
+                type="button"
+                className="btn-secondary px-3"
+                onClick={() =>
+                  updateDraft({
+                    ...(draft as SiteContent["faq"]),
+                    items: (draft as SiteContent["faq"]).items.filter((_, i) => i !== idx)
+                  })
+                }
+              >
+                מחק
+              </button>
+            </div>
+          ))}
+          <button
+            type="button"
+            className="btn-secondary"
+            onClick={() =>
               updateDraft({
                 ...(draft as SiteContent["faq"]),
-                items: linesToFaq(e.target.value)
+                items: [...(draft as SiteContent["faq"]).items, { q: "שאלה חדשה", a: "תשובה חדשה" }]
               })
             }
-          />
-        </label>
+          >
+            + הוסף שאלה
+          </button>
+        </div>
       ) : null}
 
       {selected === "testimonials" && draft ? (
@@ -831,17 +1375,68 @@ export default function AdminContentEditor({
             />
           </label>
           <label className="text-sm">
-            <span className="font-medium">המלצות (שורה: שם | טקסט)</span>
-            <textarea
-              className="mt-1 w-full min-h-36 rounded-xl border border-slate-200 p-2"
-              value={testimonialsToLines((draft as SiteContent["testimonials"]).items)}
-              onChange={(e) =>
-                updateDraft({
-                  ...(draft as SiteContent["testimonials"]),
-                  items: linesToTestimonials(e.target.value)
-                })
-              }
-            />
+            <span className="font-medium">המלצות</span>
+            <div className="mt-2 space-y-2">
+              {(draft as SiteContent["testimonials"]).items.map((item, idx) => (
+                <div key={`${item.name}-${idx}`} className="grid gap-2 md:grid-cols-[180px_1fr_auto]">
+                  <input
+                    className="rounded-xl border border-slate-200 p-2"
+                    placeholder="שם"
+                    value={item.name}
+                    onChange={(e) =>
+                      updateDraft({
+                        ...(draft as SiteContent["testimonials"]),
+                        items: updateItemArray((draft as SiteContent["testimonials"]).items, idx, {
+                          ...item,
+                          name: e.target.value
+                        })
+                      })
+                    }
+                  />
+                  <input
+                    className="rounded-xl border border-slate-200 p-2"
+                    placeholder="טקסט"
+                    value={item.text}
+                    onChange={(e) =>
+                      updateDraft({
+                        ...(draft as SiteContent["testimonials"]),
+                        items: updateItemArray((draft as SiteContent["testimonials"]).items, idx, {
+                          ...item,
+                          text: e.target.value
+                        })
+                      })
+                    }
+                  />
+                  <button
+                    type="button"
+                    className="btn-secondary px-3"
+                    onClick={() =>
+                      updateDraft({
+                        ...(draft as SiteContent["testimonials"]),
+                        items: (draft as SiteContent["testimonials"]).items.filter((_, i) => i !== idx)
+                      })
+                    }
+                  >
+                    מחק
+                  </button>
+                </div>
+              ))}
+              <button
+                type="button"
+                className="btn-secondary"
+                onClick={() =>
+                  updateDraft({
+                    ...(draft as SiteContent["testimonials"]),
+                    items: [
+                      ...(draft as SiteContent["testimonials"]).items,
+                      { name: "מטופל/ת", text: "תוכן המלצה" }
+                    ]
+                  })
+                }
+              >
+                + הוסף המלצה
+              </button>
+            </div>
           </label>
         </div>
       ) : null}
@@ -875,19 +1470,141 @@ export default function AdminContentEditor({
             />
           </label>
           <label className="text-sm">
-            <span className="font-medium">
-              פרסומים (שורה: כותרת | שנה | כתב עת | DOI | קישור DOI | קישור PubMed)
-            </span>
-            <textarea
-              className="mt-1 w-full min-h-44 rounded-xl border border-slate-200 p-2"
-              value={publicationsToLines((draft as SiteContent["publications"]).items)}
-              onChange={(e) =>
-                updateDraft({
-                  ...(draft as SiteContent["publications"]),
-                  items: linesToPublications(e.target.value)
-                })
-              }
-            />
+            <span className="font-medium">פרסומים</span>
+            <div className="mt-2 space-y-3">
+              {(draft as SiteContent["publications"]).items.map((item, idx) => (
+                <div key={`${item.title}-${idx}`} className="rounded-xl border border-slate-200 p-3">
+                  <div className="grid gap-2 md:grid-cols-2">
+                    <input
+                      className="rounded-xl border border-slate-200 p-2"
+                      placeholder="כותרת"
+                      value={item.title}
+                      onChange={(e) =>
+                        updateDraft({
+                          ...(draft as SiteContent["publications"]),
+                          items: updateItemArray(
+                            (draft as SiteContent["publications"]).items,
+                            idx,
+                            { ...item, title: e.target.value }
+                          )
+                        })
+                      }
+                    />
+                    <input
+                      className="rounded-xl border border-slate-200 p-2"
+                      placeholder="כתב עת"
+                      value={item.journal}
+                      onChange={(e) =>
+                        updateDraft({
+                          ...(draft as SiteContent["publications"]),
+                          items: updateItemArray(
+                            (draft as SiteContent["publications"]).items,
+                            idx,
+                            { ...item, journal: e.target.value }
+                          )
+                        })
+                      }
+                    />
+                    <input
+                      className="rounded-xl border border-slate-200 p-2"
+                      placeholder="שנה"
+                      type="number"
+                      value={item.year}
+                      onChange={(e) =>
+                        updateDraft({
+                          ...(draft as SiteContent["publications"]),
+                          items: updateItemArray(
+                            (draft as SiteContent["publications"]).items,
+                            idx,
+                            { ...item, year: Number(e.target.value) || item.year }
+                          )
+                        })
+                      }
+                    />
+                    <input
+                      className="rounded-xl border border-slate-200 p-2"
+                      placeholder="DOI"
+                      value={item.doi || ""}
+                      onChange={(e) =>
+                        updateDraft({
+                          ...(draft as SiteContent["publications"]),
+                          items: updateItemArray(
+                            (draft as SiteContent["publications"]).items,
+                            idx,
+                            { ...item, doi: e.target.value || undefined }
+                          )
+                        })
+                      }
+                    />
+                    <input
+                      className="rounded-xl border border-slate-200 p-2"
+                      placeholder="קישור DOI"
+                      value={item.doiUrl || ""}
+                      onChange={(e) =>
+                        updateDraft({
+                          ...(draft as SiteContent["publications"]),
+                          items: updateItemArray(
+                            (draft as SiteContent["publications"]).items,
+                            idx,
+                            { ...item, doiUrl: e.target.value || undefined }
+                          )
+                        })
+                      }
+                    />
+                    <div className="flex gap-2">
+                      <input
+                        className="w-full rounded-xl border border-slate-200 p-2"
+                        placeholder="קישור PubMed"
+                        value={item.pubmedUrl || ""}
+                        onChange={(e) =>
+                          updateDraft({
+                            ...(draft as SiteContent["publications"]),
+                            items: updateItemArray(
+                              (draft as SiteContent["publications"]).items,
+                              idx,
+                              { ...item, pubmedUrl: e.target.value || undefined }
+                            )
+                          })
+                        }
+                      />
+                      <button
+                        type="button"
+                        className="btn-secondary px-3"
+                        onClick={() =>
+                          updateDraft({
+                            ...(draft as SiteContent["publications"]),
+                            items: (draft as SiteContent["publications"]).items.filter(
+                              (_, i) => i !== idx
+                            )
+                          })
+                        }
+                      >
+                        מחק
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+              <button
+                type="button"
+                className="btn-secondary"
+                onClick={() =>
+                  updateDraft({
+                    ...(draft as SiteContent["publications"]),
+                    items: [
+                      ...(draft as SiteContent["publications"]).items,
+                      {
+                        title: "פרסום חדש",
+                        year: new Date().getFullYear(),
+                        journal: "שם כתב עת"
+                      }
+                    ]
+                  })
+                }
+              >
+                + הוסף פרסום
+              </button>
+            </div>
           </label>
         </div>
       ) : null}
@@ -899,6 +1616,9 @@ export default function AdminContentEditor({
           שינוי נשמר ישירות לאתר. אחרי שמירה בצע/י רענון כדי לראות את העדכון.
         </p>
       )}
+      {uploadingField ? (
+        <p className="mt-2 text-xs text-slate-500">מעלה תמונה... ({uploadingField})</p>
+      ) : null}
     </div>
   );
 }
