@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getSiteContent } from "@/lib/site-content";
 
 const NavLink = ({ href, label }: { href: string; label: string }) => (
   <Link
@@ -9,7 +10,10 @@ const NavLink = ({ href, label }: { href: string; label: string }) => (
   </Link>
 );
 
-export default function Navbar() {
+export default async function Navbar() {
+  const content = await getSiteContent();
+  const { shared } = content;
+
   return (
     <header className="sticky top-0 z-50 border-b border-slate-200/70 bg-white/80 backdrop-blur-xl">
       <div className="container h-16 flex items-center justify-between">
@@ -18,8 +22,8 @@ export default function Navbar() {
             BF
           </span>
           <div className="leading-tight">
-            <div className="font-semibold">ד״ר בני פרדמן</div>
-            <div className="text-xs text-slate-500">מומחה לשיקום הפה</div>
+            <div className="font-semibold">{shared.doctorName}</div>
+            <div className="text-xs text-slate-500">{shared.specialty}</div>
           </div>
         </Link>
 
@@ -29,6 +33,7 @@ export default function Navbar() {
           <NavLink href="/treatments" label="תחומי טיפול" />
           <NavLink href="/publications" label="אקדמיה/פרסומים" />
           <NavLink href="/contact" label="צור קשר" />
+          <NavLink href="/admin" label="Admin" />
         </nav>
 
         <div className="flex items-center gap-3">
@@ -36,7 +41,7 @@ export default function Navbar() {
             href="/contact"
             className="btn-primary px-4 py-2"
           >
-            לתיאום ייעוץ
+            {shared.navCtaLabel}
           </Link>
         </div>
       </div>
