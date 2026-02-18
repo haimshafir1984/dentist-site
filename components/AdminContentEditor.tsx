@@ -28,6 +28,12 @@ function isSectionValue(value: string): value is SectionValue {
   return sectionOptions.some((opt) => opt.value === value);
 }
 
+const defaultTheme: SiteContent["shared"]["theme"] = {
+  primaryColor: "#0369a1",
+  accentColor: "#0ea5e9",
+  fontFamily: "assistant"
+};
+
 export default function AdminContentEditor({
   initialSection
 }: {
@@ -62,7 +68,16 @@ export default function AdminContentEditor({
     if (!content) {
       return;
     }
-    setDraft(content[selected]);
+    const sectionData = content[selected];
+    if (selected === "shared" && sectionData && typeof sectionData === "object") {
+      const shared = sectionData as SiteContent["shared"];
+      setDraft({
+        ...shared,
+        theme: { ...defaultTheme, ...(shared.theme || {}) }
+      });
+    } else {
+      setDraft(sectionData);
+    }
     setStatus("");
   }, [selected, content]);
 
@@ -177,14 +192,19 @@ export default function AdminContentEditor({
 
       {selected === "shared" && draft ? (
         <div className="mt-3 grid gap-4 md:grid-cols-2">
+          {(() => {
+            const sharedDraft = draft as SiteContent["shared"];
+            const theme = { ...defaultTheme, ...(sharedDraft.theme || {}) };
+            return (
+              <>
           <label className="text-sm">
             <span className="font-medium">שם הרופא</span>
             <input
               className="mt-1 w-full rounded-xl border border-slate-200 p-2"
-              value={(draft as SiteContent["shared"]).doctorName}
+              value={sharedDraft.doctorName}
               onChange={(e) =>
                 updateDraft({
-                  ...(draft as SiteContent["shared"]),
+                  ...sharedDraft,
                   doctorName: e.target.value
                 })
               }
@@ -194,10 +214,10 @@ export default function AdminContentEditor({
             <span className="font-medium">תת כותרת</span>
             <input
               className="mt-1 w-full rounded-xl border border-slate-200 p-2"
-              value={(draft as SiteContent["shared"]).specialty}
+              value={sharedDraft.specialty}
               onChange={(e) =>
                 updateDraft({
-                  ...(draft as SiteContent["shared"]),
+                  ...sharedDraft,
                   specialty: e.target.value
                 })
               }
@@ -207,10 +227,10 @@ export default function AdminContentEditor({
             <span className="font-medium">טלפון</span>
             <input
               className="mt-1 w-full rounded-xl border border-slate-200 p-2"
-              value={(draft as SiteContent["shared"]).phone}
+              value={sharedDraft.phone}
               onChange={(e) =>
                 updateDraft({
-                  ...(draft as SiteContent["shared"]),
+                  ...sharedDraft,
                   phone: e.target.value
                 })
               }
@@ -220,10 +240,10 @@ export default function AdminContentEditor({
             <span className="font-medium">נייד</span>
             <input
               className="mt-1 w-full rounded-xl border border-slate-200 p-2"
-              value={(draft as SiteContent["shared"]).mobile}
+              value={sharedDraft.mobile}
               onChange={(e) =>
                 updateDraft({
-                  ...(draft as SiteContent["shared"]),
+                  ...sharedDraft,
                   mobile: e.target.value
                 })
               }
@@ -233,10 +253,10 @@ export default function AdminContentEditor({
             <span className="font-medium">כתובת</span>
             <input
               className="mt-1 w-full rounded-xl border border-slate-200 p-2"
-              value={(draft as SiteContent["shared"]).address}
+              value={sharedDraft.address}
               onChange={(e) =>
                 updateDraft({
-                  ...(draft as SiteContent["shared"]),
+                  ...sharedDraft,
                   address: e.target.value
                 })
               }
@@ -246,10 +266,10 @@ export default function AdminContentEditor({
             <span className="font-medium">אימייל</span>
             <input
               className="mt-1 w-full rounded-xl border border-slate-200 p-2"
-              value={(draft as SiteContent["shared"]).email}
+              value={sharedDraft.email}
               onChange={(e) =>
                 updateDraft({
-                  ...(draft as SiteContent["shared"]),
+                  ...sharedDraft,
                   email: e.target.value
                 })
               }
@@ -261,10 +281,10 @@ export default function AdminContentEditor({
               <input
                 className="w-full rounded-xl border border-slate-200 p-2 bg-white"
                 placeholder="/uploads/logo.png"
-                value={(draft as SiteContent["shared"]).logoImageUrl || ""}
+                value={sharedDraft.logoImageUrl || ""}
                 onChange={(e) =>
                   updateDraft({
-                    ...(draft as SiteContent["shared"]),
+                    ...sharedDraft,
                     logoImageUrl: e.target.value
                   })
                 }
@@ -282,7 +302,7 @@ export default function AdminContentEditor({
                       file,
                       (url) =>
                         updateDraft({
-                          ...(draft as SiteContent["shared"]),
+                          ...sharedDraft,
                           logoImageUrl: url
                         }),
                       "shared.logoImageUrl"
@@ -291,9 +311,9 @@ export default function AdminContentEditor({
                 />
               </label>
             </div>
-            {(draft as SiteContent["shared"]).logoImageUrl ? (
+            {sharedDraft.logoImageUrl ? (
               <img
-                src={(draft as SiteContent["shared"]).logoImageUrl}
+                src={sharedDraft.logoImageUrl}
                 alt="logo preview"
                 className="mt-3 h-16 w-16 rounded-xl border border-slate-200 object-cover"
               />
@@ -333,12 +353,12 @@ export default function AdminContentEditor({
                 <input
                   type="color"
                   className="mt-1 h-10 w-full rounded-md border border-slate-200"
-                  value={(draft as SiteContent["shared"]).theme.primaryColor}
+                  value={theme.primaryColor}
                   onChange={(e) =>
                     updateDraft({
-                      ...(draft as SiteContent["shared"]),
+                      ...sharedDraft,
                       theme: {
-                        ...(draft as SiteContent["shared"]).theme,
+                        ...theme,
                         primaryColor: e.target.value
                       }
                     })
@@ -350,12 +370,12 @@ export default function AdminContentEditor({
                 <input
                   type="color"
                   className="mt-1 h-10 w-full rounded-md border border-slate-200"
-                  value={(draft as SiteContent["shared"]).theme.accentColor}
+                  value={theme.accentColor}
                   onChange={(e) =>
                     updateDraft({
-                      ...(draft as SiteContent["shared"]),
+                      ...sharedDraft,
                       theme: {
-                        ...(draft as SiteContent["shared"]).theme,
+                        ...theme,
                         accentColor: e.target.value
                       }
                     })
@@ -366,12 +386,12 @@ export default function AdminContentEditor({
                 <span className="font-medium">פונט</span>
                 <select
                   className="mt-1 h-10 w-full rounded-xl border border-slate-200 px-2 bg-white"
-                  value={(draft as SiteContent["shared"]).theme.fontFamily}
+                  value={theme.fontFamily}
                   onChange={(e) =>
                     updateDraft({
-                      ...(draft as SiteContent["shared"]),
+                      ...sharedDraft,
                       theme: {
-                        ...(draft as SiteContent["shared"]).theme,
+                        ...theme,
                         fontFamily: e.target.value as SiteContent["shared"]["theme"]["fontFamily"]
                       }
                     })
@@ -384,6 +404,9 @@ export default function AdminContentEditor({
               </label>
             </div>
           </div>
+              </>
+            );
+          })()}
         </div>
       ) : null}
 
