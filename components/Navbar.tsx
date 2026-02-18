@@ -39,6 +39,7 @@ export default async function Navbar() {
           <NavLink href="/" label="בית" />
           <NavLink href="/about" label="אודות" />
           <NavLink href="/treatments" label="תחומי טיפול" />
+          <NavLink href="/patient-instructions" label="מרכז הדרכה" />
           <NavLink href="/publications" label="אקדמיה/פרסומים" />
           <NavLink href="/contact" label="צור קשר" />
           <NavLink href="/admin" label="Admin" />

@@ -27,6 +27,9 @@ export default async function Footer() {
             <Link className="text-slate-600 hover:text-sky-800" href="/treatments">
               תחומי טיפול
             </Link>
+            <Link className="text-slate-600 hover:text-sky-800" href="/patient-instructions">
+              מרכז הדרכה
+            </Link>
             <Link className="text-slate-600 hover:text-sky-800" href="/pricing">
               עלויות טיפול
             </Link>
