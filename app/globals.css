@@ -21,7 +21,7 @@ body {
 }
 
 ::selection {
-  background-color: color-mix(in srgb, var(--accent-color) 35%, white);
+  background-color: var(--accent-color);
   color: #0f172a;
 }
 
@@ -33,17 +33,17 @@ body {
   .btn-primary {
     @apply rounded-xl text-white px-5 py-2.5 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2;
     background-color: var(--primary-color);
-    focus-visible:ring-color: color-mix(in srgb, var(--accent-color) 45%, white);
+    focus-visible:ring-color: var(--accent-color);
   }
 
   .btn-primary:hover {
-    background-color: color-mix(in srgb, var(--primary-color) 85%, black);
+    filter: brightness(0.94);
   }
 
   .btn-secondary {
     @apply rounded-xl border bg-white px-5 py-2.5 text-sm font-semibold text-slate-800 transition focus-visible:outline-none focus-visible:ring-2;
-    border-color: color-mix(in srgb, var(--accent-color) 28%, #cbd5e1);
-    focus-visible:ring-color: color-mix(in srgb, var(--accent-color) 35%, white);
+    border-color: var(--accent-color);
+    focus-visible:ring-color: var(--accent-color);
   }
 
   .btn-secondary:hover {
