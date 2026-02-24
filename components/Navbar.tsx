@@ -14,7 +14,7 @@ const navItems = [
 const NavLink = ({ href, label }: { href: string; label: string }) => (
   <Link
     href={href}
-    className="text-slate-600 hover:text-sky-800 transition font-medium"
+    className="text-slate-600 hover:text-sky-800 transition duration-300 font-medium"
   >
     {label}
   </Link>
@@ -71,7 +71,7 @@ export default async function Navbar() {
                     <Link
                       key={`mobile-${item.href}`}
                       href={item.href}
-                      className="rounded-xl px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+                      className="rounded-xl px-3 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 min-h-12 flex items-center"
                     >
                       {item.label}
                     </Link>

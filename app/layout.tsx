@@ -4,6 +4,7 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import AdminModeBar from "@/components/AdminModeBar";
+import MobileContactFab from "@/components/MobileContactFab";
 import { getSiteContent } from "@/lib/site-content";
 
 export const metadata: Metadata = {
@@ -45,6 +46,7 @@ export default async function RootLayout({
         <AdminModeBar />
         <Navbar />
         <main className="relative">{children}</main>
+        <MobileContactFab />
         <Footer />
       </body>
     </html>
