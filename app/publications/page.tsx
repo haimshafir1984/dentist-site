@@ -1,21 +1,20 @@
 import Section from "@/components/Section";
 import AdminEditHint from "@/components/AdminEditHint";
 import { getSiteContent } from "@/lib/site-content";
+import StaggerReveal from "@/components/StaggerReveal";
 
 export default async function PublicationsPage() {
   const { publications } = await getSiteContent();
 
   return (
-    <Section
-      title={publications.title}
-      subtitle={publications.subtitle}
-    >
+    <Section title={publications.title} subtitle={publications.subtitle}>
       <AdminEditHint section="publications" />
-      <div className="grid gap-4">
+      <StaggerReveal className="grid gap-4">
         {publications.items.map((item) => (
           <article
             key={`${item.title}-${item.year}`}
-            className="surface-card p-6 border-l-4 border-l-[var(--primary-color)]"
+            className="surface-card p-6 border-r-4"
+            style={{ borderRightColor: "var(--accent-color)" }}
           >
             <h3 className="text-lg font-semibold text-slate-900">{item.title}</h3>
             <div className="mt-2 text-sm text-slate-600">
@@ -28,7 +27,7 @@ export default async function PublicationsPage() {
                   href={item.doiUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 font-medium text-slate-700 transition duration-300 hover:border-[var(--primary-color)] hover:text-[var(--primary-color)]"
+                  className="rounded-full border border-slate-300 bg-white px-3 py-1.5 font-medium text-slate-700 transition duration-300 hover:border-[var(--accent-color)] hover:text-[var(--accent-color)]"
                 >
                   DOI: {item.doi}
                 </a>
@@ -38,7 +37,7 @@ export default async function PublicationsPage() {
                   href={item.pubmedUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 font-medium text-slate-700 transition duration-300 hover:border-[var(--primary-color)] hover:text-[var(--primary-color)]"
+                  className="rounded-full border border-slate-300 bg-white px-3 py-1.5 font-medium text-slate-700 transition duration-300 hover:border-[var(--accent-color)] hover:text-[var(--accent-color)]"
                 >
                   PubMed
                 </a>
@@ -46,7 +45,7 @@ export default async function PublicationsPage() {
             </div>
           </article>
         ))}
-      </div>
+      </StaggerReveal>
     </Section>
   );
 }
