@@ -103,7 +103,7 @@ export default async function HomePage() {
               title={card.title}
               text={card.text}
               badge={card.badge}
-              icon={[Stethoscope, ShieldCheck, Sparkles, ScanLine, Smile, Award][idx % 6]}
+              icon={[Stethoscope, ShieldCheck, Sparkles, ScanLine, Smile, PhoneCall][idx % 6]}
             />
           ))}
         </div>
