@@ -5,56 +5,47 @@
 @tailwind utilities;
 
 :root {
-  color-scheme: light;
+  color-scheme: dark;
   --primary-color: #0d2137;
   --accent-color: #c9a35c;
-  --bg-glow-1: rgba(201, 163, 92, 0.12);
-  --bg-glow-2: rgba(13, 33, 55, 0.06);
+  --bg-glow-1: rgba(201, 163, 92, 0.08);
+  --bg-glow-2: rgba(201, 163, 92, 0.04);
   --surface-bg: rgba(255, 255, 255, 0.97);
-  --surface-border: rgba(226, 232, 240, 0.8);
-  --surface-shadow: 0 2px 12px -4px rgba(13, 33, 55, 0.10);
+  --surface-border: rgba(255, 255, 255, 0.10);
+  --surface-shadow: 0 4px 24px -6px rgba(0, 0, 0, 0.35);
 }
 
+/* Dark navy body — cards float on it */
+body {
+  @apply antialiased;
+  color: rgba(255,255,255,0.85);
+  line-height: 1.6;
+  letter-spacing: 0.01em;
+  background: #0c1825;
+}
+
+/* Theme-specific glow accents */
 body[data-theme="navy"] {
-  --bg-glow-1: rgba(201, 163, 92, 0.12);
-  --bg-glow-2: rgba(13, 33, 55, 0.06);
-  --surface-bg: rgba(255, 255, 255, 0.97);
-  --surface-border: rgba(226, 232, 240, 0.8);
-  --surface-shadow: 0 2px 12px -4px rgba(13, 33, 55, 0.10);
+  --bg-glow-1: rgba(201, 163, 92, 0.08);
+  --bg-glow-2: rgba(201, 163, 92, 0.04);
 }
 
 body[data-theme="medical"] {
-  --bg-glow-1: rgba(56, 189, 248, 0.12);
-  --bg-glow-2: rgba(14, 165, 233, 0.08);
-  --surface-bg: rgba(255, 255, 255, 0.9);
-  --surface-border: rgba(226, 232, 240, 0.75);
-  --surface-shadow: 0 2px 12px -4px rgba(2, 132, 199, 0.25);
+  background: #091824;
+  --bg-glow-1: rgba(56, 189, 248, 0.08);
+  --bg-glow-2: rgba(14, 165, 233, 0.04);
 }
 
 body[data-theme="premium"] {
-  --bg-glow-1: rgba(168, 85, 247, 0.15);
-  --bg-glow-2: rgba(109, 40, 217, 0.12);
-  --surface-bg: rgba(255, 255, 255, 0.94);
-  --surface-border: rgba(221, 214, 254, 0.85);
-  --surface-shadow: 0 2px 12px -4px rgba(91, 33, 182, 0.25);
+  background: #120d20;
+  --bg-glow-1: rgba(168, 85, 247, 0.10);
+  --bg-glow-2: rgba(109, 40, 217, 0.07);
 }
 
 body[data-theme="calm"] {
-  --bg-glow-1: rgba(20, 184, 166, 0.14);
-  --bg-glow-2: rgba(15, 118, 110, 0.11);
-  --surface-bg: rgba(255, 255, 255, 0.92);
-  --surface-border: rgba(153, 246, 228, 0.75);
-  --surface-shadow: 0 2px 12px -4px rgba(13, 148, 136, 0.2);
-}
-
-body {
-  @apply text-slate-900 antialiased;
-  line-height: 1.6;
-  letter-spacing: 0.01em;
-  background:
-    radial-gradient(1100px 500px at 90% -10%, var(--bg-glow-1), transparent 55%),
-    radial-gradient(900px 420px at -10% 0%, var(--bg-glow-2), transparent 50%),
-    linear-gradient(180deg, #f8fafc 0%, #f8fbff 45%, #ffffff 100%);
+  background: #091a18;
+  --bg-glow-1: rgba(20, 184, 166, 0.10);
+  --bg-glow-2: rgba(15, 118, 110, 0.06);
 }
 
 .container {
@@ -72,15 +63,17 @@ a {
 
 @layer components {
   .surface-card {
-    @apply rounded-2xl border;
-    border-color: var(--surface-border);
-    background-color: var(--surface-bg);
+    @apply rounded-2xl;
+    background-color: #ffffff;
+    border: 1px solid rgba(226, 232, 240, 0.9);
     box-shadow: var(--surface-shadow);
     transition: box-shadow 300ms ease, transform 300ms ease;
+    color: #0f172a;
   }
 
   .surface-card:hover {
-    box-shadow: 0 8px 28px -8px rgba(13, 33, 55, 0.16);
+    box-shadow: 0 12px 40px -10px rgba(0, 0, 0, 0.45);
+    transform: translateY(-2px);
   }
 
   .btn-primary {
@@ -89,36 +82,40 @@ a {
     background-color: var(--accent-color);
     --tw-ring-color: var(--accent-color);
     letter-spacing: 0.01em;
+    color: #0f172a;
   }
 
   .btn-primary:hover {
-    filter: brightness(1.08);
-    transform: translateY(-1px);
-    box-shadow: 0 8px 24px -8px color-mix(in srgb, var(--accent-color) 60%, transparent);
+    filter: brightness(1.10);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 28px -8px rgba(201,163,92,0.55);
   }
 
   .btn-secondary {
-    @apply rounded-full border bg-white px-6 py-2.5 text-sm font-semibold text-slate-800 transition duration-300 focus-visible:outline-none focus-visible:ring-2 inline-flex items-center justify-center;
+    @apply rounded-full px-6 py-2.5 text-sm font-semibold transition duration-300 focus-visible:outline-none focus-visible:ring-2 inline-flex items-center justify-center;
     min-height: 44px;
-    border-color: var(--surface-border);
+    background-color: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.18);
+    color: rgba(255,255,255,0.85);
     --tw-ring-color: var(--accent-color);
   }
 
   .btn-secondary:hover {
+    background-color: rgba(255,255,255,0.14);
     border-color: var(--accent-color);
-    color: var(--primary-color);
+    color: #ffffff;
     transform: translateY(-1px);
   }
 
   h1 {
-    @apply text-slate-900;
+    color: #ffffff;
     font-family: var(--heading-font, inherit);
     font-weight: var(--heading-weight, 800);
     letter-spacing: var(--heading-letter-spacing, -0.03em);
   }
 
   h2 {
-    @apply text-slate-900;
+    color: #ffffff;
     font-family: var(--heading-font, inherit);
     font-weight: var(--heading-weight, 800);
     letter-spacing: var(--heading-letter-spacing, -0.02em);
@@ -127,9 +124,15 @@ a {
   h3 {
     font-family: var(--heading-font, inherit);
   }
+
+  /* h2 and h3 INSIDE white cards keep dark color */
+  .surface-card h2,
+  .surface-card h3 {
+    color: #0f172a;
+  }
 }
 
-/* Font size scale overrides — higher specificity than Tailwind utilities */
+/* Font size scale overrides */
 body[data-font-scale="compact"] h1 { font-size: 2rem; }
 body[data-font-scale="compact"] h2 { font-size: 1.5rem; }
 @media (min-width: 768px) {

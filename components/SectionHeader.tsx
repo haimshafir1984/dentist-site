@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 export default function SectionHeader({
   title,
   subtitle,
-  dark = false
+  dark = true
 }: {
   title: string;
   subtitle?: string;

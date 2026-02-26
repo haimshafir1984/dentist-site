@@ -5,7 +5,7 @@ export default function Section({
   subtitle,
   children,
   className = "",
-  dark = false
+  dark = true
 }: {
   title: string;
   subtitle?: string;
