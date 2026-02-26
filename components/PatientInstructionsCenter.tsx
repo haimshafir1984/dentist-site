@@ -188,7 +188,7 @@ function TimelineItem({ step, index }: { step: Step; index: number }) {
       </div>
 
       <article className="surface-card p-5">
-        <div className="text-xs font-semibold text-sky-800">{step.time}</div>
+        <div className="text-xs font-semibold text-[var(--primary-color)]">{step.time}</div>
         <h3 className="mt-1 text-lg font-bold text-slate-900">{step.title}</h3>
         <p className="mt-3 text-slate-700 leading-relaxed">{step.content}</p>
 
@@ -237,9 +237,10 @@ export default function PatientInstructionsCenter() {
             onClick={() => setSelected("extraction")}
             className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
               selected === "extraction"
-                ? "bg-sky-700 text-white"
+                ? "text-white"
                 : "bg-white text-slate-700 border border-slate-300"
             }`}
+            style={selected === "extraction" ? { backgroundColor: "var(--primary-color)" } : undefined}
           >
             עקירה והשתלה
           </button>
@@ -248,9 +249,10 @@ export default function PatientInstructionsCenter() {
             onClick={() => setSelected("whitening")}
             className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
               selected === "whitening"
-                ? "bg-sky-700 text-white"
+                ? "text-white"
                 : "bg-white text-slate-700 border border-slate-300"
             }`}
+            style={selected === "whitening" ? { backgroundColor: "var(--primary-color)" } : undefined}
           >
             הלבנה ביתית
           </button>
@@ -259,9 +261,10 @@ export default function PatientInstructionsCenter() {
             onClick={() => setSelected("dentures")}
             className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
               selected === "dentures"
-                ? "bg-sky-700 text-white"
+                ? "text-white"
                 : "bg-white text-slate-700 border border-slate-300"
             }`}
+            style={selected === "dentures" ? { backgroundColor: "var(--primary-color)" } : undefined}
           >
             תותבות
           </button>

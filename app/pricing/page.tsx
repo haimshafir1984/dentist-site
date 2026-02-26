@@ -21,9 +21,9 @@ export default async function PricingPage() {
         ))}
       </div>
 
-      <div className="mt-8 rounded-2xl border border-sky-100 bg-sky-50/60 p-6">
+      <div className="mt-8 rounded-2xl border border-slate-200 bg-gradient-to-b from-[var(--bg-glow-1)] to-white p-6">
         <p className="text-slate-700 leading-relaxed">{pricing.summary}</p>
-        <Link href="/contact" className="btn-primary inline-flex mt-4">
+        <Link href="/contact" className="btn-primary inline-flex mt-5">
           {pricing.ctaLabel}
         </Link>
       </div>

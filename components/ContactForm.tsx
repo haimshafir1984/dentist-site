@@ -56,7 +56,7 @@ export default function ContactForm({ labels }: { labels: FormLabels }) {
           <input
             name="fullName"
             required
-            className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 outline-none transition focus:border-sky-400 focus:ring-2 focus:ring-sky-100"
+            className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 outline-none transition focus:border-[var(--primary-color)] focus:ring-2 focus:ring-[var(--bg-glow-2)]"
             placeholder={labels.fullNamePlaceholder}
           />
         </div>
@@ -65,7 +65,7 @@ export default function ContactForm({ labels }: { labels: FormLabels }) {
           <input
             name="phone"
             required
-            className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 outline-none transition focus:border-sky-400 focus:ring-2 focus:ring-sky-100"
+            className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 outline-none transition focus:border-[var(--primary-color)] focus:ring-2 focus:ring-[var(--bg-glow-2)]"
             placeholder={labels.phonePlaceholder}
           />
         </div>
@@ -74,7 +74,7 @@ export default function ContactForm({ labels }: { labels: FormLabels }) {
           <input
             name="email"
             type="email"
-            className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 outline-none transition focus:border-sky-400 focus:ring-2 focus:ring-sky-100"
+            className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 outline-none transition focus:border-[var(--primary-color)] focus:ring-2 focus:ring-[var(--bg-glow-2)]"
             placeholder={labels.emailPlaceholder}
           />
         </div>
@@ -82,7 +82,7 @@ export default function ContactForm({ labels }: { labels: FormLabels }) {
           <label className="text-sm font-medium text-slate-700">{labels.preferredTime}</label>
           <select
             name="preferredTime"
-            className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 outline-none transition focus:border-sky-400 focus:ring-2 focus:ring-sky-100"
+            className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 outline-none transition focus:border-[var(--primary-color)] focus:ring-2 focus:ring-[var(--bg-glow-2)]"
             defaultValue="בוקר"
           >
             <option>בוקר</option>
@@ -98,7 +98,7 @@ export default function ContactForm({ labels }: { labels: FormLabels }) {
         <textarea
           name="message"
           required
-          className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 min-h-[110px] outline-none transition focus:border-sky-400 focus:ring-2 focus:ring-sky-100"
+          className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 min-h-[110px] outline-none transition focus:border-[var(--primary-color)] focus:ring-2 focus:ring-[var(--bg-glow-2)]"
           placeholder={labels.messagePlaceholder}
         />
       </div>

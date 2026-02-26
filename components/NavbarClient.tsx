@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 
 type SharedData = {
   doctorName: string;
@@ -22,6 +23,7 @@ const navItems = [
 
 export default function NavbarClient({ shared }: { shared: SharedData }) {
   const [scrolled, setScrolled] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -40,7 +42,10 @@ export default function NavbarClient({ shared }: { shared: SharedData }) {
     >
       <div className="container h-16 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2">
-          <span className="inline-flex h-9 w-9 items-center justify-center overflow-hidden rounded-xl bg-sky-700 text-white font-bold shadow-sm">
+          <span
+            className="inline-flex h-9 w-9 items-center justify-center overflow-hidden rounded-xl text-white font-bold shadow-sm"
+            style={{ backgroundColor: "var(--primary-color)" }}
+          >
             {shared.logoImageUrl ? (
               <img
                 src={shared.logoImageUrl}
@@ -62,9 +67,19 @@ export default function NavbarClient({ shared }: { shared: SharedData }) {
             <Link
               key={item.href}
               href={item.href}
-              className="text-slate-600 hover:text-[var(--primary-color)] transition duration-300 font-medium"
+              aria-current={pathname === item.href ? "page" : undefined}
+              className={`relative pb-1 transition duration-300 font-medium ${
+                pathname === item.href
+                  ? "text-[var(--primary-color)]"
+                  : "text-slate-600 hover:text-[var(--primary-color)]"
+              }`}
             >
               {item.label}
+              <span
+                className={`pointer-events-none absolute -bottom-0.5 right-0 h-0.5 rounded-full bg-[var(--primary-color)] transition-all duration-300 ${
+                  pathname === item.href ? "w-full opacity-100" : "w-0 opacity-0"
+                }`}
+              />
             </Link>
           ))}
         </nav>
@@ -86,7 +101,12 @@ export default function NavbarClient({ shared }: { shared: SharedData }) {
                     <Link
                       key={`mobile-${item.href}`}
                       href={item.href}
-                      className="rounded-xl px-3 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 min-h-12 flex items-center"
+                      aria-current={pathname === item.href ? "page" : undefined}
+                      className={`rounded-xl px-3 py-3 text-sm font-medium min-h-12 flex items-center transition ${
+                        pathname === item.href
+                          ? "bg-[var(--bg-glow-2)] text-[var(--primary-color)]"
+                          : "text-slate-700 hover:bg-slate-50"
+                      }`}
                     >
                       {item.label}
                     </Link>

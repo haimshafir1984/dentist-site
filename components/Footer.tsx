@@ -18,25 +18,25 @@ export default async function Footer() {
         <div className="text-sm">
           <div className="font-semibold mb-2 text-slate-900">קישורים</div>
           <div className="flex flex-col gap-2">
-            <Link className="text-slate-600 hover:text-sky-800" href="/">
+            <Link className="text-slate-600 hover:text-[var(--primary-color)] hover:translate-x-0.5" href="/">
               בית
             </Link>
-            <Link className="text-slate-600 hover:text-sky-800" href="/about">
+            <Link className="text-slate-600 hover:text-[var(--primary-color)] hover:translate-x-0.5" href="/about">
               אודות
             </Link>
-            <Link className="text-slate-600 hover:text-sky-800" href="/treatments">
+            <Link className="text-slate-600 hover:text-[var(--primary-color)] hover:translate-x-0.5" href="/treatments">
               תחומי טיפול
             </Link>
-            <Link className="text-slate-600 hover:text-sky-800" href="/patient-instructions">
+            <Link className="text-slate-600 hover:text-[var(--primary-color)] hover:translate-x-0.5" href="/patient-instructions">
               מרכז הדרכה
             </Link>
-            <Link className="text-slate-600 hover:text-sky-800" href="/pricing">
+            <Link className="text-slate-600 hover:text-[var(--primary-color)] hover:translate-x-0.5" href="/pricing">
               עלויות טיפול
             </Link>
-            <Link className="text-slate-600 hover:text-sky-800" href="/publications">
+            <Link className="text-slate-600 hover:text-[var(--primary-color)] hover:translate-x-0.5" href="/publications">
               אקדמיה/פרסומים
             </Link>
-            <Link className="text-slate-600 hover:text-sky-800" href="/contact">
+            <Link className="text-slate-600 hover:text-[var(--primary-color)] hover:translate-x-0.5" href="/contact">
               צור קשר
             </Link>
           </div>
@@ -52,7 +52,7 @@ export default async function Footer() {
               אימייל:{" "}
               <a
                 href={`mailto:${shared.email}`}
-                className="hover:text-sky-800 underline underline-offset-2"
+                className="hover:text-[var(--primary-color)] underline underline-offset-2"
               >
                 {shared.email}
               </a>
@@ -64,7 +64,7 @@ export default async function Footer() {
                 href={shared.social.facebook}
                 target="_blank"
                 rel="noreferrer"
-                className="text-slate-600 hover:text-[var(--primary-color)] underline underline-offset-2"
+                className="text-slate-600 hover:text-[var(--primary-color)] underline underline-offset-2 hover:scale-105"
               >
                 Facebook
               </a>
@@ -74,7 +74,7 @@ export default async function Footer() {
                 href={shared.social.instagram}
                 target="_blank"
                 rel="noreferrer"
-                className="text-slate-600 hover:text-[var(--primary-color)] underline underline-offset-2"
+                className="text-slate-600 hover:text-[var(--primary-color)] underline underline-offset-2 hover:scale-105"
               >
                 Instagram
               </a>
@@ -84,7 +84,7 @@ export default async function Footer() {
                 href={shared.social.linkedin}
                 target="_blank"
                 rel="noreferrer"
-                className="text-slate-600 hover:text-[var(--primary-color)] underline underline-offset-2"
+                className="text-slate-600 hover:text-[var(--primary-color)] underline underline-offset-2 hover:scale-105"
               >
                 LinkedIn
               </a>

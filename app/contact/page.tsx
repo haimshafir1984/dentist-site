@@ -15,7 +15,7 @@ export default async function ContactPage() {
       <div className="grid gap-6 md:grid-cols-2">
         <ContactForm labels={contact.formLabels} />
 
-        <div className="surface-card p-6 bg-gradient-to-b from-sky-50/70 to-white">
+        <div className="surface-card p-6 bg-gradient-to-b from-[var(--bg-glow-1)] to-white">
           <h3 className="font-semibold text-lg">{contact.infoTitle}</h3>
           <div className="mt-3 text-slate-700 space-y-2">
             <div>
@@ -31,7 +31,7 @@ export default async function ContactPage() {
                   href={`https://wa.me/${shared.whatsapp.replace(/[^0-9]/g, "")}`}
                   target="_blank"
                   rel="noreferrer"
-                  className="text-sky-800 underline underline-offset-2"
+                  className="text-[var(--primary-color)] underline underline-offset-2"
                 >
                   {shared.whatsapp}
                 </a>
@@ -41,7 +41,7 @@ export default async function ContactPage() {
               <span className="font-semibold">אימייל:</span>{" "}
               <a
                 href={`mailto:${shared.email}`}
-                className="text-sky-800 underline underline-offset-2"
+                className="text-[var(--primary-color)] underline underline-offset-2"
               >
                 {shared.email}
               </a>

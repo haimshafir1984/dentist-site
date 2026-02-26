@@ -7,7 +7,6 @@ import AdminEditHint from "@/components/AdminEditHint";
 import { getSiteContent } from "@/lib/site-content";
 import RevealOnScroll from "@/components/RevealOnScroll";
 import {
-  Award,
   ArrowLeft,
   ShieldCheck,
   Stethoscope,
@@ -30,7 +29,7 @@ export default async function HomePage() {
         <div className="absolute inset-0 bg-gradient-to-b from-slate-900/5 via-transparent to-transparent pointer-events-none" />
         <div className="container grid gap-10 md:grid-cols-2 items-center">
           <RevealOnScroll>
-            <p className="inline-flex items-center rounded-full border border-sky-100 bg-sky-50 px-3 py-1 text-xs font-semibold text-sky-700">
+            <p className="inline-flex items-center rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-[var(--primary-color)]">
               {home.pill}
             </p>
             <h1 className="mt-4 text-4xl md:text-6xl font-extrabold leading-tight tracking-tight text-slate-900">
@@ -66,7 +65,7 @@ export default async function HomePage() {
           </RevealOnScroll>
 
           <RevealOnScroll>
-          <div className="rounded-3xl border border-sky-100 bg-gradient-to-b from-sky-50/80 to-white p-8 shadow-[0_15px_40px_-24px_rgba(2,132,199,0.5)]">
+          <div className="rounded-3xl border border-slate-200 bg-gradient-to-b from-[var(--bg-glow-1)] to-white p-8 shadow-[0_15px_40px_-24px_rgba(2,132,199,0.5)]">
             {home.heroImageUrl ? (
               <img
                 src={home.heroImageUrl}
@@ -74,7 +73,7 @@ export default async function HomePage() {
                 className="mb-4 h-44 w-full rounded-2xl border border-slate-200 object-cover"
               />
             ) : null}
-            <div className="text-sm font-semibold text-sky-800">{home.clinicalTitle}</div>
+            <div className="text-sm font-semibold text-[var(--primary-color)]">{home.clinicalTitle}</div>
             <ul className="mt-4 space-y-3 text-slate-700">
               {home.clinicalBullets.map((item) => (
                 <li key={item}>✓ {item}</li>
@@ -88,25 +87,6 @@ export default async function HomePage() {
               </p>
             </div>
           </div>
-          </RevealOnScroll>
-        </div>
-
-        <div className="container mt-8">
-          <RevealOnScroll>
-            <div className="surface-card p-4 grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
-              <div className="flex items-center gap-2 text-slate-700">
-                <Award size={18} className="text-[var(--primary-color)]" />
-                <span>Professional Staff</span>
-              </div>
-              <div className="flex items-center gap-2 text-slate-700">
-                <Stethoscope size={18} className="text-[var(--primary-color)]" />
-                <span>Modern Equipment</span>
-              </div>
-              <div className="flex items-center gap-2 text-slate-700">
-                <ShieldCheck size={18} className="text-[var(--primary-color)]" />
-                <span>Emergency Care</span>
-              </div>
-            </div>
           </RevealOnScroll>
         </div>
       </section>
@@ -131,7 +111,7 @@ export default async function HomePage() {
 
         <div className="mt-6">
           <Link
-            className="text-sm font-semibold text-sky-800 underline decoration-sky-300 underline-offset-4 transition duration-300 hover:text-slate-900"
+            className="text-sm font-semibold text-[var(--primary-color)] underline decoration-[var(--accent-color)] underline-offset-4 transition duration-300 hover:text-slate-900"
             href="/treatments"
           >
             לכל תחומי הטיפול →
@@ -266,7 +246,7 @@ export default async function HomePage() {
       <section className="py-20">
         <div className="container">
           <RevealOnScroll>
-          <div className="rounded-3xl bg-gradient-to-r from-sky-800 to-cyan-700 text-white p-8 md:p-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-[0_20px_60px_-35px_rgba(8,145,178,0.9)]">
+          <div className="rounded-3xl text-white p-8 md:p-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-[0_20px_60px_-35px_rgba(8,145,178,0.9)]" style={{ background: "linear-gradient(120deg, var(--primary-color), var(--accent-color))" }}>
             <div>
               <div className="text-2xl font-bold">{home.bottomCtaTitle}</div>
               <div className="text-slate-200 mt-2">
@@ -275,7 +255,7 @@ export default async function HomePage() {
             </div>
             <Link
               href="/contact"
-              className="rounded-xl bg-white text-slate-900 px-5 py-3 text-sm font-semibold hover:bg-sky-50 transition"
+              className="rounded-xl bg-white text-slate-900 px-5 py-3 text-sm font-semibold transition hover:brightness-95"
             >
               {home.bottomCtaButton}
             </Link>

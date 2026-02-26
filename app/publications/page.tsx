@@ -13,7 +13,10 @@ export default async function PublicationsPage() {
       <AdminEditHint section="publications" />
       <div className="grid gap-4">
         {publications.items.map((item) => (
-          <article key={`${item.title}-${item.year}`} className="surface-card p-6">
+          <article
+            key={`${item.title}-${item.year}`}
+            className="surface-card p-6 border-l-4 border-l-[var(--primary-color)]"
+          >
             <h3 className="text-lg font-semibold text-slate-900">{item.title}</h3>
             <div className="mt-2 text-sm text-slate-600">
               <span className="font-medium">שנה:</span> {item.year} |{" "}
@@ -25,7 +28,7 @@ export default async function PublicationsPage() {
                   href={item.doiUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 font-medium text-slate-700 hover:bg-slate-50"
+                  className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 font-medium text-slate-700 transition duration-300 hover:border-[var(--primary-color)] hover:text-[var(--primary-color)]"
                 >
                   DOI: {item.doi}
                 </a>
@@ -35,7 +38,7 @@ export default async function PublicationsPage() {
                   href={item.pubmedUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 font-medium text-slate-700 hover:bg-slate-50"
+                  className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 font-medium text-slate-700 transition duration-300 hover:border-[var(--primary-color)] hover:text-[var(--primary-color)]"
                 >
                   PubMed
                 </a>
