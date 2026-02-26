@@ -24,6 +24,19 @@ export default async function ContactPage() {
             <div>
               <span className="font-semibold">נייד:</span> {shared.mobile}
             </div>
+            {shared.whatsapp ? (
+              <div>
+                <span className="font-semibold">WhatsApp:</span>{" "}
+                <a
+                  href={`https://wa.me/${shared.whatsapp.replace(/[^0-9]/g, "")}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-sky-800 underline underline-offset-2"
+                >
+                  {shared.whatsapp}
+                </a>
+              </div>
+            ) : null}
             <div>
               <span className="font-semibold">אימייל:</span>{" "}
               <a
@@ -45,6 +58,22 @@ export default async function ContactPage() {
                 <li key={item}>• {item}</li>
               ))}
             </ul>
+          </div>
+
+          <div className="mt-6 rounded-2xl overflow-hidden border border-slate-200">
+            {shared.mapEmbedUrl ? (
+              <iframe
+                src={shared.mapEmbedUrl}
+                title="contact-map"
+                className="h-[260px] w-full border-0"
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              />
+            ) : (
+              <div className="h-[260px] flex items-center justify-center text-sm text-slate-500 bg-white">
+                ניתן להוסיף קישור מפה מתוך פאנל הניהול
+              </div>
+            )}
           </div>
         </div>
       </div>

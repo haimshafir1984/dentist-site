@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import type { ComponentType } from "react";
 
 export default function Card({
   title,
@@ -12,7 +13,7 @@ export default function Card({
   text: string;
   badge?: string;
   href?: string;
-  icon?: React.ComponentType<{ size?: number; className?: string }>;
+  icon?: ComponentType<{ size?: number; className?: string }>;
 }) {
   return (
     <div className="surface-card p-6 rounded-2xl bg-white hover:-translate-y-1 hover:shadow-[0_20px_45px_-24px_rgba(15,23,42,0.35)]">

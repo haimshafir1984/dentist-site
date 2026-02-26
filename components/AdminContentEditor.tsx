@@ -284,6 +284,80 @@ export default function AdminContentEditor({
               }
             />
           </label>
+          <label className="text-sm">
+            <span className="font-medium">וואטסאפ/טלפון מהיר</span>
+            <input
+              className="mt-1 w-full rounded-xl border border-slate-200 p-2"
+              value={sharedDraft.whatsapp || ""}
+              onChange={(e) =>
+                updateDraft({
+                  ...sharedDraft,
+                  whatsapp: e.target.value
+                })
+              }
+            />
+          </label>
+          <label className="text-sm">
+            <span className="font-medium">קישור מפה (Embed)</span>
+            <input
+              className="mt-1 w-full rounded-xl border border-slate-200 p-2"
+              value={sharedDraft.mapEmbedUrl || ""}
+              onChange={(e) =>
+                updateDraft({
+                  ...sharedDraft,
+                  mapEmbedUrl: e.target.value
+                })
+              }
+            />
+          </label>
+          <label className="text-sm">
+            <span className="font-medium">Facebook</span>
+            <input
+              className="mt-1 w-full rounded-xl border border-slate-200 p-2"
+              value={sharedDraft.social?.facebook || ""}
+              onChange={(e) =>
+                updateDraft({
+                  ...sharedDraft,
+                  social: {
+                    ...(sharedDraft.social || {}),
+                    facebook: e.target.value
+                  }
+                })
+              }
+            />
+          </label>
+          <label className="text-sm">
+            <span className="font-medium">Instagram</span>
+            <input
+              className="mt-1 w-full rounded-xl border border-slate-200 p-2"
+              value={sharedDraft.social?.instagram || ""}
+              onChange={(e) =>
+                updateDraft({
+                  ...sharedDraft,
+                  social: {
+                    ...(sharedDraft.social || {}),
+                    instagram: e.target.value
+                  }
+                })
+              }
+            />
+          </label>
+          <label className="text-sm md:col-span-2">
+            <span className="font-medium">LinkedIn</span>
+            <input
+              className="mt-1 w-full rounded-xl border border-slate-200 p-2"
+              value={sharedDraft.social?.linkedin || ""}
+              onChange={(e) =>
+                updateDraft({
+                  ...sharedDraft,
+                  social: {
+                    ...(sharedDraft.social || {}),
+                    linkedin: e.target.value
+                  }
+                })
+              }
+            />
+          </label>
           <div className="md:col-span-2 rounded-xl border border-slate-200 p-4 bg-slate-50">
             <div className="font-semibold text-slate-900">לוגו / תמונת מותג</div>
             <div className="mt-2 grid gap-3 md:grid-cols-[1fr_auto]">

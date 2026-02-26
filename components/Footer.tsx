@@ -58,11 +58,47 @@ export default async function Footer() {
               </a>
             </div>
           </div>
+          <div className="mt-4 flex items-center gap-3 text-xs">
+            {shared.social.facebook ? (
+              <a
+                href={shared.social.facebook}
+                target="_blank"
+                rel="noreferrer"
+                className="text-slate-600 hover:text-[var(--primary-color)] underline underline-offset-2"
+              >
+                Facebook
+              </a>
+            ) : null}
+            {shared.social.instagram ? (
+              <a
+                href={shared.social.instagram}
+                target="_blank"
+                rel="noreferrer"
+                className="text-slate-600 hover:text-[var(--primary-color)] underline underline-offset-2"
+              >
+                Instagram
+              </a>
+            ) : null}
+            {shared.social.linkedin ? (
+              <a
+                href={shared.social.linkedin}
+                target="_blank"
+                rel="noreferrer"
+                className="text-slate-600 hover:text-[var(--primary-color)] underline underline-offset-2"
+              >
+                LinkedIn
+              </a>
+            ) : null}
+          </div>
         </div>
       </div>
 
       <div className="container py-6 text-xs text-slate-500">
         © {new Date().getFullYear()} {shared.doctorName}. {shared.footerDisclaimer}
+        <span className="mx-2">|</span>
+        <a href="#" className="underline underline-offset-2 hover:text-slate-700">
+          הצהרת נגישות
+        </a>
       </div>
     </footer>
   );

@@ -8,16 +8,20 @@ import { getSiteContent } from "@/lib/site-content";
 import RevealOnScroll from "@/components/RevealOnScroll";
 import {
   Award,
+  ArrowLeft,
   ShieldCheck,
   Stethoscope,
   Sparkles,
   ScanLine,
-  Smile
+  Smile,
+  PhoneCall,
+  MapPin,
+  LifeBuoy
 } from "lucide-react";
 
 export default async function HomePage() {
   const content = await getSiteContent();
-  const { home } = content;
+  const { home, about, shared } = content;
 
   return (
     <>
@@ -41,7 +45,7 @@ export default async function HomePage() {
                 href="/contact"
                 className="btn-primary"
               >
-                {home.primaryCta}
+                קביעת תור
               </Link>
               <Link
                 href="/treatments"
@@ -54,7 +58,7 @@ export default async function HomePage() {
             <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3 text-center">
               {home.valueCards.map((card) => (
                 <div key={card.title} className="surface-card p-4">
-                  <div className="text-base font-bold text-sky-700">{card.title}</div>
+                  <div className="text-base font-bold text-[var(--primary-color)]">{card.title}</div>
                   <div className="text-xs text-slate-600 mt-1">{card.text}</div>
                 </div>
               ))}
@@ -135,6 +139,45 @@ export default async function HomePage() {
         </div>
       </Section>
 
+      <Section title="המרפאה והרופא" subtitle={about.subtitle}>
+        <RevealOnScroll>
+          <div className="grid gap-6 md:grid-cols-2 items-stretch">
+            <div className="surface-card overflow-hidden">
+              {about.profileImageUrl ? (
+                <img
+                  src={about.profileImageUrl}
+                  alt={about.introTitle}
+                  className="h-full min-h-80 w-full object-cover"
+                />
+              ) : (
+                <div className="h-full min-h-80 bg-gradient-to-br from-slate-100 to-white p-6 flex items-center justify-center text-slate-400">
+                  תמונת פרופיל מקצועית
+                </div>
+              )}
+            </div>
+            <div className="surface-card p-7 flex flex-col">
+              <h3 className="text-2xl font-bold text-slate-900">{about.introTitle}</h3>
+              <p className="mt-3 text-slate-600 leading-relaxed">{about.introText}</p>
+              <ul className="mt-5 space-y-2 text-slate-700 text-sm">
+                {about.introBullets.map((item) => (
+                  <li key={item} className="flex items-start gap-2">
+                    <ShieldCheck size={16} className="mt-0.5 text-[var(--primary-color)]" />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+              <Link
+                href="/about"
+                className="mt-6 inline-flex items-center gap-1 text-sm font-semibold text-[var(--primary-color)] hover:gap-2 transition duration-300"
+              >
+                להמשך קריאה
+                <ArrowLeft size={16} />
+              </Link>
+            </div>
+          </div>
+        </RevealOnScroll>
+      </Section>
+
       <Section
         title={home.processTitle}
         subtitle={home.processSubtitle}
@@ -163,6 +206,60 @@ export default async function HomePage() {
       >
         <RevealOnScroll>
         <FAQ />
+        </RevealOnScroll>
+      </Section>
+
+      <Section
+        title="יצירת קשר ומיקום"
+        subtitle="אפשר לקבוע תור בטלפון או להשאיר פרטים ונחזור אליכם בהקדם."
+      >
+        <RevealOnScroll>
+          <div className="grid gap-6 md:grid-cols-2">
+            <div className="surface-card p-6">
+              <div className="space-y-3 text-slate-700">
+                <div className="flex items-center gap-2">
+                  <PhoneCall size={17} className="text-[var(--primary-color)]" />
+                  <a href={`tel:${shared.phone}`} className="hover:text-[var(--primary-color)]">
+                    {shared.phone}
+                  </a>
+                </div>
+                <div className="flex items-center gap-2">
+                  <LifeBuoy size={17} className="text-[var(--primary-color)]" />
+                  <a href={`tel:${shared.mobile}`} className="hover:text-[var(--primary-color)]">
+                    {shared.mobile}
+                  </a>
+                </div>
+                <div className="flex items-center gap-2">
+                  <MapPin size={17} className="text-[var(--primary-color)]" />
+                  <span>{shared.address}</span>
+                </div>
+              </div>
+              <div className="mt-6 flex flex-wrap gap-3">
+                <Link href="/contact" className="btn-primary">
+                  לתיאום ייעוץ
+                </Link>
+                <a href={`tel:${shared.phone}`} className="btn-secondary">
+                  חיוג מהיר
+                </a>
+              </div>
+            </div>
+
+            <div className="surface-card overflow-hidden">
+              {shared.mapEmbedUrl ? (
+                <iframe
+                  src={shared.mapEmbedUrl}
+                  title="clinic-map"
+                  className="h-[320px] w-full border-0"
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                />
+              ) : (
+                <div className="h-[320px] flex items-center justify-center text-slate-500">
+                  הוסף קישור מפה מתוך פאנל הניהול
+                </div>
+              )}
+            </div>
+          </div>
         </RevealOnScroll>
       </Section>
 

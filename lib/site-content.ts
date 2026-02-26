@@ -29,7 +29,14 @@ export type SiteContent = {
     address: string;
     phone: string;
     mobile: string;
+    whatsapp?: string;
     email: string;
+    social: {
+      facebook?: string;
+      instagram?: string;
+      linkedin?: string;
+    };
+    mapEmbedUrl?: string;
     footerTagline: string;
     footerDisclaimer: string;
   };
@@ -151,7 +158,15 @@ export const defaultSiteContent: SiteContent = {
     address: "הנדיב 71, הרצליה",
     phone: "09-7790809",
     mobile: "053-4534916",
+    whatsapp: "053-4534916",
     email: "benny.ferdman@gmail.com",
+    social: {
+      facebook: "",
+      instagram: "",
+      linkedin: ""
+    },
+    mapEmbedUrl:
+      "https://www.google.com/maps?q=%D7%94%D7%A0%D7%93%D7%99%D7%91+71+%D7%94%D7%A8%D7%A6%D7%9C%D7%99%D7%94&output=embed",
     footerTagline:
       "שיקום הפה בגישה רפואית מדויקת, תכנון דיגיטלי מתקדם, פתרונות למקרים מורכבים ויחס אישי רגוע.",
     footerDisclaimer:
@@ -390,6 +405,10 @@ function normalizeContent(data: Partial<SiteContent> | null | undefined): SiteCo
     shared: {
       ...defaultSiteContent.shared,
       ...data?.shared,
+      social: {
+        ...defaultSiteContent.shared.social,
+        ...data?.shared?.social
+      },
       theme: safeTheme
     },
     home: {
@@ -466,7 +485,8 @@ function normalizeContent(data: Partial<SiteContent> | null | undefined): SiteCo
 }
 
 const dataDir = path.join(process.cwd(), "data");
-const filePath = path.join(dataDir, "site-content.json");
+const filePath = path.join(dataDir, "content.json");
+const legacyFilePath = path.join(dataDir, "site-content.json");
 
 export async function getSiteContent(): Promise<SiteContent> {
   try {
@@ -477,7 +497,16 @@ export async function getSiteContent(): Promise<SiteContent> {
     }
     return normalizeContent(parsed);
   } catch {
-    return defaultSiteContent;
+    try {
+      const rawLegacy = await fs.readFile(legacyFilePath, "utf8");
+      const parsedLegacy = JSON.parse(rawLegacy);
+      if (!parsedLegacy || typeof parsedLegacy !== "object") {
+        return defaultSiteContent;
+      }
+      return normalizeContent(parsedLegacy);
+    } catch {
+      return defaultSiteContent;
+    }
   }
 }
 
