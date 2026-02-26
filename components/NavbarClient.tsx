@@ -26,7 +26,7 @@ export default function NavbarClient({ shared }: { shared: SharedData }) {
   const pathname = usePathname();
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
+    const onScroll = () => setScrolled(window.scrollY > 40);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -34,17 +34,17 @@ export default function NavbarClient({ shared }: { shared: SharedData }) {
 
   return (
     <header
-      className={`sticky top-0 z-50 transition-all duration-300 ${
+      className={`sticky top-0 z-50 transition-all duration-500 ${
         scrolled
-          ? "border-b border-slate-200/80 bg-white/95 shadow-sm backdrop-blur-xl"
-          : "bg-transparent"
+          ? "bg-[#0c1825] shadow-[0_2px_24px_rgba(0,0,0,0.5)]"
+          : "bg-[#0c1825]/80 backdrop-blur-md"
       }`}
     >
       <div className="container h-16 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2">
+        <Link href="/" className="flex items-center gap-2.5">
           <span
-            className="inline-flex h-9 w-9 items-center justify-center overflow-hidden rounded-xl text-white font-bold shadow-sm"
-            style={{ backgroundColor: "var(--primary-color)" }}
+            className="inline-flex h-9 w-9 items-center justify-center overflow-hidden rounded-xl font-bold shadow-sm text-white/90"
+            style={{ backgroundColor: "var(--accent-color)" }}
           >
             {shared.logoImageUrl ? (
               <img
@@ -57,8 +57,8 @@ export default function NavbarClient({ shared }: { shared: SharedData }) {
             )}
           </span>
           <div className="leading-tight">
-            <div className="font-semibold">{shared.doctorName}</div>
-            <div className="text-xs text-slate-500">{shared.specialty}</div>
+            <div className="font-semibold text-white text-sm">{shared.doctorName}</div>
+            <div className="text-xs text-white/50">{shared.specialty}</div>
           </div>
         </Link>
 
@@ -68,34 +68,37 @@ export default function NavbarClient({ shared }: { shared: SharedData }) {
               key={item.href}
               href={item.href}
               aria-current={pathname === item.href ? "page" : undefined}
-              className={`relative pb-1 transition duration-300 font-medium ${
+              className={`relative pb-1 transition duration-300 text-sm font-medium ${
                 pathname === item.href
-                  ? "text-[var(--primary-color)]"
-                  : "text-slate-600 hover:text-[var(--primary-color)]"
+                  ? "text-[var(--accent-color)]"
+                  : "text-white/70 hover:text-white"
               }`}
             >
               {item.label}
               <span
-                className={`pointer-events-none absolute -bottom-0.5 right-0 h-0.5 rounded-full bg-[var(--primary-color)] transition-all duration-300 ${
-                  pathname === item.href ? "w-full opacity-100" : "w-0 opacity-0"
-                }`}
+                className={`pointer-events-none absolute -bottom-0.5 right-0 h-0.5 rounded-full transition-all duration-300`}
+                style={{
+                  backgroundColor: "var(--accent-color)",
+                  width: pathname === item.href ? "100%" : "0",
+                  opacity: pathname === item.href ? 1 : 0
+                }}
               />
             </Link>
           ))}
         </nav>
 
         <div className="flex items-center gap-2">
-          <Link href="/contact" className="btn-primary px-4 py-2 hidden sm:inline-flex">
+          <Link href="/contact" className="btn-primary px-4 py-2 hidden sm:inline-flex text-xs">
             {shared.navCtaLabel}
           </Link>
 
           <div className="md:hidden relative">
             <details className="group">
-              <summary className="list-none h-10 w-10 cursor-pointer rounded-xl border border-slate-300 bg-white flex items-center justify-center text-slate-700 [&::-webkit-details-marker]:hidden">
+              <summary className="list-none h-10 w-10 cursor-pointer rounded-xl border border-white/20 bg-white/10 flex items-center justify-center text-white [&::-webkit-details-marker]:hidden">
                 <span className="text-xl leading-none">☰</span>
               </summary>
 
-              <div className="absolute top-12 left-0 w-[88vw] max-w-xs rounded-2xl border border-slate-200 bg-white p-3 shadow-lg">
+              <div className="absolute top-12 left-0 w-[88vw] max-w-xs rounded-2xl border border-slate-200 bg-white p-3 shadow-xl">
                 <div className="flex flex-col gap-1">
                   {navItems.map((item) => (
                     <Link
@@ -104,7 +107,7 @@ export default function NavbarClient({ shared }: { shared: SharedData }) {
                       aria-current={pathname === item.href ? "page" : undefined}
                       className={`rounded-xl px-3 py-3 text-sm font-medium min-h-12 flex items-center transition ${
                         pathname === item.href
-                          ? "bg-[var(--bg-glow-2)] text-[var(--primary-color)]"
+                          ? "bg-slate-100 text-[var(--primary-color)]"
                           : "text-slate-700 hover:bg-slate-50"
                       }`}
                     >

@@ -17,7 +17,8 @@ const sectionOptions = [
   { value: "contact", label: "עמוד צור קשר + טופס" },
   { value: "faq", label: "שאלות נפוצות" },
   { value: "testimonials", label: "המלצות" },
-  { value: "publications", label: "אקדמיה/פרסומים" }
+  { value: "publications", label: "אקדמיה/פרסומים" },
+  { value: "gallery", label: "גלריית המרפאה" }
 ] as const;
 
 type SectionValue = (typeof sectionOptions)[number]["value"];
@@ -34,10 +35,14 @@ function isSectionValue(value: string): value is SectionValue {
 }
 
 const defaultTheme: SiteContent["shared"]["theme"] = {
-  presetId: "medical",
-  primaryColor: "#0369a1",
-  accentColor: "#0ea5e9",
-  fontFamily: "assistant"
+  presetId: "navy",
+  primaryColor: "#0d2137",
+  accentColor: "#c9a35c",
+  fontFamily: "heebo",
+  headingFont: "heebo",
+  headingWeight: "800",
+  fontSizeScale: "normal",
+  letterSpacing: "tight"
 };
 
 export default function AdminContentEditor({
@@ -499,7 +504,7 @@ export default function AdminContentEditor({
                 />
               </label>
               <label className="text-sm">
-                <span className="font-medium">פונט</span>
+                <span className="font-medium">פונט גוף טקסט</span>
                 <select
                   className="mt-1 h-10 w-full rounded-xl border border-slate-200 px-2 bg-white"
                   value={theme.fontFamily}
@@ -519,6 +524,95 @@ export default function AdminContentEditor({
                   <option value="rubik">Rubik</option>
                 </select>
               </label>
+            </div>
+            <div className="mt-3 border-t border-slate-200 pt-3">
+              <div className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-3">טיפוגרפיה — כותרות</div>
+              <div className="grid gap-4 md:grid-cols-2">
+                <label className="text-sm">
+                  <span className="font-medium">פונט כותרות</span>
+                  <select
+                    className="mt-1 h-10 w-full rounded-xl border border-slate-200 px-2 bg-white"
+                    value={theme.headingFont ?? theme.fontFamily}
+                    onChange={(e) =>
+                      updateDraft({
+                        ...sharedDraft,
+                        theme: {
+                          ...theme,
+                          presetId: activePresetId,
+                          headingFont: e.target.value as SiteContent["shared"]["theme"]["headingFont"]
+                        }
+                      })
+                    }
+                  >
+                    <option value="assistant">Assistant</option>
+                    <option value="heebo">Heebo</option>
+                    <option value="rubik">Rubik</option>
+                  </select>
+                </label>
+                <label className="text-sm">
+                  <span className="font-medium">עובי כותרות</span>
+                  <select
+                    className="mt-1 h-10 w-full rounded-xl border border-slate-200 px-2 bg-white"
+                    value={theme.headingWeight ?? "800"}
+                    onChange={(e) =>
+                      updateDraft({
+                        ...sharedDraft,
+                        theme: {
+                          ...theme,
+                          presetId: activePresetId,
+                          headingWeight: e.target.value as SiteContent["shared"]["theme"]["headingWeight"]
+                        }
+                      })
+                    }
+                  >
+                    <option value="700">רגיל (700)</option>
+                    <option value="800">בולד (800)</option>
+                    <option value="900">שחור (900)</option>
+                  </select>
+                </label>
+                <label className="text-sm">
+                  <span className="font-medium">גודל כותרות</span>
+                  <select
+                    className="mt-1 h-10 w-full rounded-xl border border-slate-200 px-2 bg-white"
+                    value={theme.fontSizeScale ?? "normal"}
+                    onChange={(e) =>
+                      updateDraft({
+                        ...sharedDraft,
+                        theme: {
+                          ...theme,
+                          presetId: activePresetId,
+                          fontSizeScale: e.target.value as SiteContent["shared"]["theme"]["fontSizeScale"]
+                        }
+                      })
+                    }
+                  >
+                    <option value="compact">קומפקטי</option>
+                    <option value="normal">רגיל</option>
+                    <option value="large">גדול</option>
+                  </select>
+                </label>
+                <label className="text-sm">
+                  <span className="font-medium">ריווח אותיות בכותרות</span>
+                  <select
+                    className="mt-1 h-10 w-full rounded-xl border border-slate-200 px-2 bg-white"
+                    value={theme.letterSpacing ?? "normal"}
+                    onChange={(e) =>
+                      updateDraft({
+                        ...sharedDraft,
+                        theme: {
+                          ...theme,
+                          presetId: activePresetId,
+                          letterSpacing: e.target.value as SiteContent["shared"]["theme"]["letterSpacing"]
+                        }
+                      })
+                    }
+                  >
+                    <option value="tight">צפוף</option>
+                    <option value="normal">רגיל</option>
+                    <option value="wide">מרווח</option>
+                  </select>
+                </label>
+              </div>
             </div>
           </div>
               </>
@@ -610,6 +704,65 @@ export default function AdminContentEditor({
               />
             ) : null}
           </div>
+          <div className="rounded-xl border border-slate-200 p-4 bg-slate-50">
+            <div className="font-semibold text-slate-900">תמונת רקע לאזור ה-Hero</div>
+            <p className="text-xs text-slate-500 mt-1">תמונה שתכסה את כל אזור ה-Hero ברקע (עם שקיפות)</p>
+            <div className="mt-2 grid gap-3 md:grid-cols-[1fr_auto]">
+              <input
+                className="w-full rounded-xl border border-slate-200 p-2 bg-white"
+                value={(draft as SiteContent["home"]).heroBackgroundImageUrl || ""}
+                onChange={(e) =>
+                  updateDraft({
+                    ...(draft as SiteContent["home"]),
+                    heroBackgroundImageUrl: e.target.value
+                  })
+                }
+                placeholder="/uploads/hero-bg.jpg"
+              />
+              <label className="btn-secondary cursor-pointer text-center">
+                העלאה
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+                    void uploadImage(
+                      file,
+                      (url) =>
+                        updateDraft({
+                          ...(draft as SiteContent["home"]),
+                          heroBackgroundImageUrl: url
+                        }),
+                      "home.heroBackgroundImageUrl"
+                    );
+                  }}
+                />
+              </label>
+            </div>
+            {(draft as SiteContent["home"]).heroBackgroundImageUrl ? (
+              <div className="mt-3 flex items-center gap-3">
+                <img
+                  src={(draft as SiteContent["home"]).heroBackgroundImageUrl}
+                  alt="hero bg preview"
+                  className="h-16 w-28 rounded-xl border border-slate-200 object-cover"
+                />
+                <button
+                  type="button"
+                  className="text-xs text-red-500 hover:underline"
+                  onClick={() =>
+                    updateDraft({
+                      ...(draft as SiteContent["home"]),
+                      heroBackgroundImageUrl: ""
+                    })
+                  }
+                >
+                  הסר תמונת רקע
+                </button>
+              </div>
+            ) : null}
+          </div>
           <label className="text-sm">
             <span className="font-medium">כרטיסי ערכים</span>
             <div className="mt-2 space-y-2">
@@ -695,67 +848,114 @@ export default function AdminContentEditor({
             <span className="font-medium">כרטיסי תחומי טיפול</span>
             <div className="mt-2 space-y-2">
               {(draft as SiteContent["home"]).treatmentsCards.map((item, idx) => (
-                <div key={`${item.title}-${idx}`} className="grid gap-2 md:grid-cols-3">
-                  <input
-                    className="rounded-xl border border-slate-200 p-2"
-                    placeholder="כותרת"
-                    value={item.title}
-                    onChange={(e) =>
-                      updateDraft({
-                        ...(draft as SiteContent["home"]),
-                        treatmentsCards: updateItemArray(
-                          (draft as SiteContent["home"]).treatmentsCards,
-                          idx,
-                          { ...item, title: e.target.value }
-                        )
-                      })
-                    }
-                  />
-                  <input
-                    className="rounded-xl border border-slate-200 p-2"
-                    placeholder="טקסט"
-                    value={item.text}
-                    onChange={(e) =>
-                      updateDraft({
-                        ...(draft as SiteContent["home"]),
-                        treatmentsCards: updateItemArray(
-                          (draft as SiteContent["home"]).treatmentsCards,
-                          idx,
-                          { ...item, text: e.target.value }
-                        )
-                      })
-                    }
-                  />
-                  <div className="flex gap-2">
+                <div key={`${item.title}-${idx}`} className="rounded-xl border border-slate-200 bg-white p-3 space-y-2">
+                  <div className="grid gap-2 md:grid-cols-3">
                     <input
-                      className="w-full rounded-xl border border-slate-200 p-2"
-                      placeholder="תג"
-                      value={item.badge || ""}
+                      className="rounded-xl border border-slate-200 p-2"
+                      placeholder="כותרת"
+                      value={item.title}
                       onChange={(e) =>
                         updateDraft({
                           ...(draft as SiteContent["home"]),
                           treatmentsCards: updateItemArray(
                             (draft as SiteContent["home"]).treatmentsCards,
                             idx,
-                            { ...item, badge: e.target.value || undefined }
+                            { ...item, title: e.target.value }
                           )
                         })
                       }
                     />
-                    <button
-                      type="button"
-                      className="btn-secondary px-3"
-                      onClick={() =>
+                    <input
+                      className="rounded-xl border border-slate-200 p-2"
+                      placeholder="טקסט"
+                      value={item.text}
+                      onChange={(e) =>
                         updateDraft({
                           ...(draft as SiteContent["home"]),
-                          treatmentsCards: (draft as SiteContent["home"]).treatmentsCards.filter(
-                            (_, i) => i !== idx
+                          treatmentsCards: updateItemArray(
+                            (draft as SiteContent["home"]).treatmentsCards,
+                            idx,
+                            { ...item, text: e.target.value }
                           )
                         })
                       }
-                    >
-                      מחק
-                    </button>
+                    />
+                    <div className="flex gap-2">
+                      <input
+                        className="w-full rounded-xl border border-slate-200 p-2"
+                        placeholder="תג"
+                        value={item.badge || ""}
+                        onChange={(e) =>
+                          updateDraft({
+                            ...(draft as SiteContent["home"]),
+                            treatmentsCards: updateItemArray(
+                              (draft as SiteContent["home"]).treatmentsCards,
+                              idx,
+                              { ...item, badge: e.target.value || undefined }
+                            )
+                          })
+                        }
+                      />
+                      <button
+                        type="button"
+                        className="btn-secondary px-3"
+                        onClick={() =>
+                          updateDraft({
+                            ...(draft as SiteContent["home"]),
+                            treatmentsCards: (draft as SiteContent["home"]).treatmentsCards.filter(
+                              (_, i) => i !== idx
+                            )
+                          })
+                        }
+                      >
+                        מחק
+                      </button>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <input
+                      className="flex-1 rounded-xl border border-slate-200 p-2 text-xs"
+                      placeholder="תמונה: /uploads/card.jpg (אופציונלי)"
+                      value={item.imageUrl || ""}
+                      onChange={(e) =>
+                        updateDraft({
+                          ...(draft as SiteContent["home"]),
+                          treatmentsCards: updateItemArray(
+                            (draft as SiteContent["home"]).treatmentsCards,
+                            idx,
+                            { ...item, imageUrl: e.target.value || undefined }
+                          )
+                        })
+                      }
+                    />
+                    <label className="btn-secondary cursor-pointer text-xs whitespace-nowrap">
+                      העלאת תמונה
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (!file) return;
+                          void uploadImage(
+                            file,
+                            (url) =>
+                              updateDraft({
+                                ...(draft as SiteContent["home"]),
+                                treatmentsCards: updateItemArray(
+                                  (draft as SiteContent["home"]).treatmentsCards,
+                                  idx,
+                                  { ...item, imageUrl: url }
+                                )
+                              }),
+                            `home.treatmentsCards[${idx}].imageUrl`
+                          );
+                        }}
+                      />
+                    </label>
+                    {item.imageUrl ? (
+                      <img src={item.imageUrl} alt="" className="h-10 w-14 rounded-lg object-cover border border-slate-200" />
+                    ) : null}
                   </div>
                 </div>
               ))}
@@ -1111,59 +1311,107 @@ export default function AdminContentEditor({
             <span className="font-medium">כרטיסי טיפולים</span>
             <div className="mt-2 space-y-2">
               {(draft as SiteContent["treatments"]).cards.map((item, idx) => (
-                <div key={`${item.title}-${idx}`} className="grid gap-2 md:grid-cols-3">
-                  <input
-                    className="rounded-xl border border-slate-200 p-2"
-                    value={item.title}
-                    onChange={(e) =>
-                      updateDraft({
-                        ...(draft as SiteContent["treatments"]),
-                        cards: updateItemArray((draft as SiteContent["treatments"]).cards, idx, {
-                          ...item,
-                          title: e.target.value
-                        })
-                      })
-                    }
-                  />
-                  <input
-                    className="rounded-xl border border-slate-200 p-2"
-                    value={item.text}
-                    onChange={(e) =>
-                      updateDraft({
-                        ...(draft as SiteContent["treatments"]),
-                        cards: updateItemArray((draft as SiteContent["treatments"]).cards, idx, {
-                          ...item,
-                          text: e.target.value
-                        })
-                      })
-                    }
-                  />
-                  <div className="flex gap-2">
+                <div key={`${item.title}-${idx}`} className="rounded-xl border border-slate-200 bg-white p-3 space-y-2">
+                  <div className="grid gap-2 md:grid-cols-3">
                     <input
-                      className="w-full rounded-xl border border-slate-200 p-2"
-                      value={item.badge || ""}
+                      className="rounded-xl border border-slate-200 p-2"
+                      placeholder="כותרת"
+                      value={item.title}
                       onChange={(e) =>
                         updateDraft({
                           ...(draft as SiteContent["treatments"]),
                           cards: updateItemArray((draft as SiteContent["treatments"]).cards, idx, {
                             ...item,
-                            badge: e.target.value || undefined
+                            title: e.target.value
                           })
                         })
                       }
                     />
-                    <button
-                      type="button"
-                      className="btn-secondary px-3"
-                      onClick={() =>
+                    <input
+                      className="rounded-xl border border-slate-200 p-2"
+                      placeholder="טקסט"
+                      value={item.text}
+                      onChange={(e) =>
                         updateDraft({
                           ...(draft as SiteContent["treatments"]),
-                          cards: (draft as SiteContent["treatments"]).cards.filter((_, i) => i !== idx)
+                          cards: updateItemArray((draft as SiteContent["treatments"]).cards, idx, {
+                            ...item,
+                            text: e.target.value
+                          })
                         })
                       }
-                    >
-                      מחק
-                    </button>
+                    />
+                    <div className="flex gap-2">
+                      <input
+                        className="w-full rounded-xl border border-slate-200 p-2"
+                        placeholder="תג"
+                        value={item.badge || ""}
+                        onChange={(e) =>
+                          updateDraft({
+                            ...(draft as SiteContent["treatments"]),
+                            cards: updateItemArray((draft as SiteContent["treatments"]).cards, idx, {
+                              ...item,
+                              badge: e.target.value || undefined
+                            })
+                          })
+                        }
+                      />
+                      <button
+                        type="button"
+                        className="btn-secondary px-3"
+                        onClick={() =>
+                          updateDraft({
+                            ...(draft as SiteContent["treatments"]),
+                            cards: (draft as SiteContent["treatments"]).cards.filter((_, i) => i !== idx)
+                          })
+                        }
+                      >
+                        מחק
+                      </button>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <input
+                      className="flex-1 rounded-xl border border-slate-200 p-2 text-xs"
+                      placeholder="תמונה: /uploads/treatment.jpg (אופציונלי)"
+                      value={item.imageUrl || ""}
+                      onChange={(e) =>
+                        updateDraft({
+                          ...(draft as SiteContent["treatments"]),
+                          cards: updateItemArray((draft as SiteContent["treatments"]).cards, idx, {
+                            ...item,
+                            imageUrl: e.target.value || undefined
+                          })
+                        })
+                      }
+                    />
+                    <label className="btn-secondary cursor-pointer text-xs whitespace-nowrap">
+                      העלאת תמונה
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (!file) return;
+                          void uploadImage(
+                            file,
+                            (url) =>
+                              updateDraft({
+                                ...(draft as SiteContent["treatments"]),
+                                cards: updateItemArray((draft as SiteContent["treatments"]).cards, idx, {
+                                  ...item,
+                                  imageUrl: url
+                                })
+                              }),
+                            `treatments.cards[${idx}].imageUrl`
+                          );
+                        }}
+                      />
+                    </label>
+                    {item.imageUrl ? (
+                      <img src={item.imageUrl} alt="" className="h-10 w-14 rounded-lg object-cover border border-slate-200" />
+                    ) : null}
                   </div>
                 </div>
               ))}
@@ -1746,6 +1994,118 @@ export default function AdminContentEditor({
               </button>
             </div>
           </label>
+        </div>
+      ) : null}
+
+      {selected === "gallery" && draft ? (
+        <div className="mt-3 grid gap-4">
+          <label className="text-sm">
+            <span className="font-medium">כותרת הגלריה</span>
+            <input
+              className="mt-1 w-full rounded-xl border border-slate-200 p-2"
+              value={(draft as SiteContent["gallery"]).title}
+              onChange={(e) =>
+                updateDraft({
+                  ...(draft as SiteContent["gallery"]),
+                  title: e.target.value
+                })
+              }
+            />
+          </label>
+          <div className="text-sm">
+            <span className="font-medium">תמונות הגלריה</span>
+            <p className="text-xs text-slate-500 mt-0.5">הוסף תמונות מרפאה, לפני/אחרי, ציוד וכדומה</p>
+            <div className="mt-3 grid gap-3 md:grid-cols-2">
+              {(draft as SiteContent["gallery"]).items.map((item, idx) => (
+                <div key={idx} className="rounded-xl border border-slate-200 bg-slate-50 p-3 space-y-2">
+                  {item.url ? (
+                    <img src={item.url} alt={item.caption || ""} className="h-32 w-full rounded-lg object-cover border border-slate-200" />
+                  ) : (
+                    <div className="h-32 rounded-lg border-2 border-dashed border-slate-300 flex items-center justify-center text-slate-400 text-xs">
+                      אין תמונה
+                    </div>
+                  )}
+                  <div className="flex gap-2">
+                    <input
+                      className="flex-1 rounded-xl border border-slate-200 p-2 text-xs bg-white"
+                      placeholder="כיתוב (אופציונלי)"
+                      value={item.caption || ""}
+                      onChange={(e) =>
+                        updateDraft({
+                          ...(draft as SiteContent["gallery"]),
+                          items: updateItemArray((draft as SiteContent["gallery"]).items, idx, {
+                            ...item,
+                            caption: e.target.value || undefined
+                          })
+                        })
+                      }
+                    />
+                    <button
+                      type="button"
+                      className="btn-secondary px-3 text-xs"
+                      onClick={() =>
+                        updateDraft({
+                          ...(draft as SiteContent["gallery"]),
+                          items: (draft as SiteContent["gallery"]).items.filter((_, i) => i !== idx)
+                        })
+                      }
+                    >
+                      מחק
+                    </button>
+                  </div>
+                  <label className="btn-secondary cursor-pointer text-xs w-full text-center block">
+                    {item.url ? "החלף תמונה" : "העלאת תמונה"}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
+                        void uploadImage(
+                          file,
+                          (url) =>
+                            updateDraft({
+                              ...(draft as SiteContent["gallery"]),
+                              items: updateItemArray((draft as SiteContent["gallery"]).items, idx, {
+                                ...item,
+                                url
+                              })
+                            }),
+                          `gallery.items[${idx}].url`
+                        );
+                      }}
+                    />
+                  </label>
+                </div>
+              ))}
+              <label className="rounded-xl border-2 border-dashed border-slate-300 bg-white p-3 flex flex-col items-center justify-center gap-2 cursor-pointer hover:border-slate-400 transition-colors min-h-[160px]">
+                <span className="text-2xl text-slate-400">+</span>
+                <span className="text-xs text-slate-500">הוסף תמונה חדשה</span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+                    void uploadImage(
+                      file,
+                      (url) =>
+                        updateDraft({
+                          ...(draft as SiteContent["gallery"]),
+                          items: [
+                            ...(draft as SiteContent["gallery"]).items,
+                            { url }
+                          ]
+                        }),
+                      "gallery.new"
+                    );
+                  }}
+                />
+              </label>
+            </div>
+          </div>
         </div>
       ) : null}
 

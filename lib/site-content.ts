@@ -2,7 +2,8 @@ import { promises as fs } from "fs";
 import path from "path";
 import { isThemePresetId, THEME_PRESETS, type ThemePresetId } from "@/lib/theme-presets";
 
-export type Item = { title: string; text: string; badge?: string };
+export type Item = { title: string; text: string; badge?: string; imageUrl?: string };
+export type GalleryItem = { url: string; caption?: string };
 export type FaqItem = { q: string; a: string };
 export type TestimonialItem = { name: string; text: string };
 export type PublicationItem = {
@@ -25,6 +26,10 @@ export type SiteContent = {
       primaryColor: string;
       accentColor: string;
       fontFamily: "heebo" | "rubik" | "assistant";
+      headingFont: "heebo" | "rubik" | "assistant";
+      headingWeight: "700" | "800" | "900";
+      fontSizeScale: "compact" | "normal" | "large";
+      letterSpacing: "tight" | "normal" | "wide";
     };
     address: string;
     phone: string;
@@ -47,6 +52,7 @@ export type SiteContent = {
     primaryCta: string;
     secondaryCta: string;
     heroImageUrl?: string;
+    heroBackgroundImageUrl?: string;
     valueCards: Item[];
     clinicalTitle: string;
     clinicalBullets: string[];
@@ -127,6 +133,10 @@ export type SiteContent = {
     subtitle: string;
     items: PublicationItem[];
   };
+  gallery: {
+    title: string;
+    items: GalleryItem[];
+  };
 };
 
 export const editableSections = [
@@ -138,7 +148,8 @@ export const editableSections = [
   "contact",
   "faq",
   "testimonials",
-  "publications"
+  "publications",
+  "gallery"
 ] as const;
 
 export type EditableSection = (typeof editableSections)[number];
@@ -150,10 +161,14 @@ export const defaultSiteContent: SiteContent = {
     navCtaLabel: "לתיאום ייעוץ",
     logoImageUrl: "",
     theme: {
-      presetId: THEME_PRESETS.medical.id,
-      primaryColor: THEME_PRESETS.medical.primaryColor,
-      accentColor: THEME_PRESETS.medical.accentColor,
-      fontFamily: THEME_PRESETS.medical.fontFamily
+      presetId: THEME_PRESETS.navy.id,
+      primaryColor: THEME_PRESETS.navy.primaryColor,
+      accentColor: THEME_PRESETS.navy.accentColor,
+      fontFamily: THEME_PRESETS.navy.fontFamily,
+      headingFont: THEME_PRESETS.navy.fontFamily,
+      headingWeight: "800",
+      fontSizeScale: "normal",
+      letterSpacing: "tight"
     },
     address: "הנדיב 71, הרצליה",
     phone: "09-7790809",
@@ -355,6 +370,10 @@ export const defaultSiteContent: SiteContent = {
       { name: "מטופל/ת", text: "קיבלתי מענה מקצועי למקרה מורכב ותחושת ביטחון לאורך כל הדרך." }
     ]
   },
+  gallery: {
+    title: "גלריית המרפאה",
+    items: []
+  },
   publications: {
     title: "אקדמיה ופרסומים",
     subtitle: "מעורבות מחקרית ופרסומים בתחום החומרים הדנטליים והדבקה לדנטין (דוגמאות).",
@@ -384,6 +403,7 @@ function normalizeContent(data: Partial<SiteContent> | null | undefined): SiteCo
     ...defaultSiteContent.shared.theme,
     ...data?.shared?.theme
   };
+  const validFonts = ["assistant", "heebo", "rubik"];
   const safeTheme = {
     presetId: isThemePresetId(theme.presetId)
       ? theme.presetId
@@ -394,9 +414,21 @@ function normalizeContent(data: Partial<SiteContent> | null | undefined): SiteCo
     accentColor: /^#[0-9a-fA-F]{6}$/.test(theme.accentColor)
       ? theme.accentColor
       : defaultSiteContent.shared.theme.accentColor,
-    fontFamily: ["assistant", "heebo", "rubik"].includes(theme.fontFamily)
+    fontFamily: validFonts.includes(theme.fontFamily)
       ? theme.fontFamily
-      : defaultSiteContent.shared.theme.fontFamily
+      : defaultSiteContent.shared.theme.fontFamily,
+    headingFont: validFonts.includes(theme.headingFont)
+      ? theme.headingFont
+      : (theme.fontFamily as string) || defaultSiteContent.shared.theme.headingFont,
+    headingWeight: ["700", "800", "900"].includes(theme.headingWeight)
+      ? theme.headingWeight
+      : defaultSiteContent.shared.theme.headingWeight,
+    fontSizeScale: ["compact", "normal", "large"].includes(theme.fontSizeScale)
+      ? theme.fontSizeScale
+      : defaultSiteContent.shared.theme.fontSizeScale,
+    letterSpacing: ["tight", "normal", "wide"].includes(theme.letterSpacing)
+      ? theme.letterSpacing
+      : defaultSiteContent.shared.theme.letterSpacing
   } as SiteContent["shared"]["theme"];
 
   return {
@@ -480,6 +512,10 @@ function normalizeContent(data: Partial<SiteContent> | null | undefined): SiteCo
       items: Array.isArray(data?.publications?.items)
         ? data.publications.items
         : defaultSiteContent.publications.items
+    },
+    gallery: {
+      title: data?.gallery?.title || defaultSiteContent.gallery.title,
+      items: Array.isArray(data?.gallery?.items) ? data.gallery.items : []
     }
   };
 }

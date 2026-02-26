@@ -4,10 +4,12 @@ import { useEffect, useRef, useState } from "react";
 
 export default function RevealOnScroll({
   children,
-  className = ""
+  className = "",
+  delay = 0
 }: {
   children: React.ReactNode;
   className?: string;
+  delay?: number;
 }) {
   const ref = useRef<HTMLDivElement | null>(null);
   const [visible, setVisible] = useState(false);
@@ -25,7 +27,7 @@ export default function RevealOnScroll({
           }
         });
       },
-      { threshold: 0.15 }
+      { threshold: 0.08 }
     );
 
     observer.observe(node);
@@ -35,9 +37,12 @@ export default function RevealOnScroll({
   return (
     <div
       ref={ref}
-      className={`${className} transition-all duration-700 ${
-        visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"
-      }`}
+      className={className}
+      style={{
+        opacity: visible ? 1 : 0,
+        transform: visible ? "translateY(0)" : "translateY(64px)",
+        transition: `opacity 0.9s cubic-bezier(0.22,1,0.36,1) ${delay}ms, transform 0.9s cubic-bezier(0.22,1,0.36,1) ${delay}ms`
+      }}
     >
       {children}
     </div>

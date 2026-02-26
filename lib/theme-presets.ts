@@ -1,4 +1,11 @@
 export const THEME_PRESETS = {
+  navy: {
+    id: "navy",
+    label: "כחול עמוק + זהב (Premium)",
+    primaryColor: "#0d2137",
+    accentColor: "#c9a35c",
+    fontFamily: "heebo"
+  },
   medical: {
     id: "medical",
     label: "רפואי נקי (כחול)",

@@ -16,7 +16,7 @@ export default async function TreatmentsPage() {
       <AdminEditHint section="treatments" />
       <div className="grid gap-4 md:grid-cols-3">
         {treatments.cards.map((t) => (
-          <Card key={t.title} title={t.title} text={t.text} badge={t.badge} />
+          <Card key={t.title} title={t.title} text={t.text} badge={t.badge} imageUrl={t.imageUrl} />
         ))}
       </div>
 

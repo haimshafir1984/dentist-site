@@ -21,6 +21,18 @@ const fontMap = {
   rubik: '"Rubik", "Noto Sans Hebrew", "Segoe UI", sans-serif'
 } as const;
 
+const letterSpacingMap = {
+  tight: "-0.03em",
+  normal: "-0.01em",
+  wide: "0.04em"
+} as const;
+
+const fontSizeScaleMap = {
+  compact: "compact",
+  normal: "normal",
+  large: "large"
+} as const;
+
 export default async function RootLayout({
   children
 }: {
@@ -35,10 +47,14 @@ export default async function RootLayout({
       <body
         className="min-h-screen"
         data-theme={theme.presetId}
+        data-font-scale={theme.fontSizeScale ?? "normal"}
         style={
           ({
             ["--primary-color" as string]: theme.primaryColor,
             ["--accent-color" as string]: theme.accentColor,
+            ["--heading-font" as string]: fontMap[theme.headingFont ?? theme.fontFamily],
+            ["--heading-weight" as string]: theme.headingWeight ?? "800",
+            ["--heading-letter-spacing" as string]: letterSpacingMap[theme.letterSpacing ?? "normal"],
             fontFamily: fontMap[theme.fontFamily]
           } as CSSProperties)
         }

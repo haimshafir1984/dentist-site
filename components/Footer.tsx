@@ -6,45 +6,31 @@ export default async function Footer() {
   const { shared } = content;
 
   return (
-    <footer className="mt-20 border-t border-slate-200/70 bg-white/70 backdrop-blur">
-      <div className="container py-10 grid gap-6 md:grid-cols-3">
+    <footer className="bg-[#0c1825]">
+      <div className="container py-12 grid gap-8 md:grid-cols-3">
         <div>
-          <div className="font-semibold text-lg text-slate-900">{shared.doctorName}</div>
-          <p className="text-slate-600 mt-2 text-sm">
+          <div className="font-semibold text-lg text-white">{shared.doctorName}</div>
+          <p className="text-white/55 mt-2 text-sm leading-relaxed">
             {shared.footerTagline}
           </p>
         </div>
 
         <div className="text-sm">
-          <div className="font-semibold mb-2 text-slate-900">קישורים</div>
+          <div className="font-semibold mb-3 text-white/80">קישורים</div>
           <div className="flex flex-col gap-2">
-            <Link className="text-slate-600 hover:text-[var(--primary-color)] hover:translate-x-0.5" href="/">
-              בית
-            </Link>
-            <Link className="text-slate-600 hover:text-[var(--primary-color)] hover:translate-x-0.5" href="/about">
-              אודות
-            </Link>
-            <Link className="text-slate-600 hover:text-[var(--primary-color)] hover:translate-x-0.5" href="/treatments">
-              תחומי טיפול
-            </Link>
-            <Link className="text-slate-600 hover:text-[var(--primary-color)] hover:translate-x-0.5" href="/patient-instructions">
-              מרכז הדרכה
-            </Link>
-            <Link className="text-slate-600 hover:text-[var(--primary-color)] hover:translate-x-0.5" href="/pricing">
-              עלויות טיפול
-            </Link>
-            <Link className="text-slate-600 hover:text-[var(--primary-color)] hover:translate-x-0.5" href="/publications">
-              אקדמיה/פרסומים
-            </Link>
-            <Link className="text-slate-600 hover:text-[var(--primary-color)] hover:translate-x-0.5" href="/contact">
-              צור קשר
-            </Link>
+            <Link className="text-white/50 hover:text-[var(--accent-color)] transition duration-200" href="/">בית</Link>
+            <Link className="text-white/50 hover:text-[var(--accent-color)] transition duration-200" href="/about">אודות</Link>
+            <Link className="text-white/50 hover:text-[var(--accent-color)] transition duration-200" href="/treatments">תחומי טיפול</Link>
+            <Link className="text-white/50 hover:text-[var(--accent-color)] transition duration-200" href="/patient-instructions">מרכז הדרכה</Link>
+            <Link className="text-white/50 hover:text-[var(--accent-color)] transition duration-200" href="/pricing">עלויות טיפול</Link>
+            <Link className="text-white/50 hover:text-[var(--accent-color)] transition duration-200" href="/publications">אקדמיה/פרסומים</Link>
+            <Link className="text-white/50 hover:text-[var(--accent-color)] transition duration-200" href="/contact">צור קשר</Link>
           </div>
         </div>
 
         <div className="text-sm">
-          <div className="font-semibold mb-2 text-slate-900">פרטים</div>
-          <div className="text-slate-600 space-y-1">
+          <div className="font-semibold mb-3 text-white/80">פרטים</div>
+          <div className="text-white/50 space-y-1.5">
             <div>כתובת: {shared.address}</div>
             <div>טלפון: {shared.phone}</div>
             <div>נייד: {shared.mobile}</div>
@@ -52,7 +38,7 @@ export default async function Footer() {
               אימייל:{" "}
               <a
                 href={`mailto:${shared.email}`}
-                className="hover:text-[var(--primary-color)] underline underline-offset-2"
+                className="hover:text-[var(--accent-color)] underline underline-offset-2 transition duration-200"
               >
                 {shared.email}
               </a>
@@ -60,43 +46,25 @@ export default async function Footer() {
           </div>
           <div className="mt-4 flex items-center gap-3 text-xs">
             {shared.social.facebook ? (
-              <a
-                href={shared.social.facebook}
-                target="_blank"
-                rel="noreferrer"
-                className="text-slate-600 hover:text-[var(--primary-color)] underline underline-offset-2 hover:scale-105"
-              >
-                Facebook
-              </a>
+              <a href={shared.social.facebook} target="_blank" rel="noreferrer"
+                className="text-white/40 hover:text-[var(--accent-color)] transition duration-200">Facebook</a>
             ) : null}
             {shared.social.instagram ? (
-              <a
-                href={shared.social.instagram}
-                target="_blank"
-                rel="noreferrer"
-                className="text-slate-600 hover:text-[var(--primary-color)] underline underline-offset-2 hover:scale-105"
-              >
-                Instagram
-              </a>
+              <a href={shared.social.instagram} target="_blank" rel="noreferrer"
+                className="text-white/40 hover:text-[var(--accent-color)] transition duration-200">Instagram</a>
             ) : null}
             {shared.social.linkedin ? (
-              <a
-                href={shared.social.linkedin}
-                target="_blank"
-                rel="noreferrer"
-                className="text-slate-600 hover:text-[var(--primary-color)] underline underline-offset-2 hover:scale-105"
-              >
-                LinkedIn
-              </a>
+              <a href={shared.social.linkedin} target="_blank" rel="noreferrer"
+                className="text-white/40 hover:text-[var(--accent-color)] transition duration-200">LinkedIn</a>
             ) : null}
           </div>
         </div>
       </div>
 
-      <div className="container py-6 text-xs text-slate-500">
+      <div className="border-t border-white/10 container py-5 text-xs text-white/30">
         © {new Date().getFullYear()} {shared.doctorName}. {shared.footerDisclaimer}
         <span className="mx-2">|</span>
-        <a href="#" className="underline underline-offset-2 hover:text-slate-700">
+        <a href="#" className="hover:text-white/60 transition duration-200">
           הצהרת נגישות
         </a>
       </div>
